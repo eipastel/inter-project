@@ -1,0 +1,270 @@
+html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --azul-clarinho: #50b7f5;
+    --quase-branco: #e6ecf0;
+}
+
+.opcoes-menu {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.opcoes-menu a {
+    text-decoration: none;
+    color: black;
+}
+
+.opcoes-menu .material-icons {
+    padding: 20px;
+}
+
+.opcoes-menu h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.opcoes-menu:hover {
+    background-color: var(--quase-branco);
+    border-radius: 30px;
+    color: var(--azul-clarinho);
+}
+
+.botao-login, .botao-sair {
+    width: 100%;
+    background-color: var(--azul-clarinho);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 30px;
+    height: 50px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.botao-sair {
+    display: none;
+}
+
+.botao-login:hover, .botao-sair:hover{
+    background-color: #4297cc;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 10px;
+}
+
+.barra-navegacao {
+    flex: 0.2;
+    border-right: 1px solid var(--quase-branco);
+    min-width: 250px;
+    margin-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.barra-navegacao p {
+    margin-top: 1rem;
+}
+
+.barra-navegacao a.cadastre-se {
+    text-decoration: none;
+    color: var(--azul-clarinho);
+    font-weight: bold;
+}
+
+.barra-navegacao a.cadastre-se:hover {
+    text-decoration: underline;
+}
+
+/* Seção principal */
+main {
+    flex: 0.5;
+    border-right: 1px solid var(--quase-branco);
+    min-width: fit-content;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.cabecalho {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    border: 1px solid var(--quase-branco);
+    padding: 15px 20px;
+}
+
+main::-webkit-scrollbar {
+    display: none;
+}
+
+.cabecalho h2 {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.caixa-postagem-input img {
+    border-radius: 50%;
+    height: 40px;
+}
+
+.caixa-postagem {
+    padding-bottom: 10px;
+    border-bottom: 8px solid var(--quase-branco);
+    padding-right: 10px;
+}
+
+.caixa-postagem form {
+    display: flex;
+    flex-direction: column;
+}
+
+.caixa-postagem-input {
+    display: flex;
+    padding: 20px;
+}
+
+.caixa-postagem-input input {
+    flex: 1;
+    margin-left: 20px;
+    font-size: 20px;
+    border: none;
+    outline: none;
+}
+
+.caixa-postagem-input button {
+    background-color: var(--azul-clarinho);
+    color: white;
+    font-weight: bold;
+    border-radius: 30px;
+    border: none;
+    width: 80px;
+    height: 40px;
+    margin-top: 20px;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.caixa-postagem-input button:hover {
+    background-color: #4297cc;
+}
+
+.post-profile-image img {
+    border-radius: 50%;
+    height: 40px;
+}
+
+.atualizacoes {
+    display: flex;
+    flex-direction: column;
+}
+
+.post {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--quase-branco);
+    padding-bottom: 10px;
+}
+
+.post-body img {
+    width: 450px;
+    object-fit: contain;
+    border-radius: 20px;
+}
+
+.post-footer {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.post-footer span {
+    cursor: pointer;
+}
+
+.post-badge {
+    font-size: 14px !important;
+    color: var(--azul-clarinho);
+    margin-right: 5px;
+}
+
+.header-icon-section {
+    font-weight: 600;
+    font-size: 12px;
+    color: grey;
+}
+
+.post-header-text h3 {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.post-header-discription {
+    margin-bottom: 10px;
+    font-size: 15px;
+    max-width: 500px;
+}
+
+.post-body {
+    flex: 1;
+    padding: 10px;
+}
+
+.post-profile-image {
+    padding: 20px;
+}
+
+/* Seção lateral */
+aside {
+    flex: 0.3;
+}
+
+.entrada-aside {
+    display: flex;
+    align-items: center;
+    background-color: var(--quase-branco);
+    padding: 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.entrada-aside input {
+    border: none;
+    background-color: var(--quase-branco);
+    outline: none;
+}
+
+.icone-busca-aside {
+    color: gray;
+}
+
+.container-aside {
+    margin-top: 15px;
+    margin-left: 20px;
+    padding: 20px;
+    background-color: #f5f8fa;
+    border-radius: 20px;
+}
+
+.container-aside h2 {
+    font-size: 18px;
+    font-weight: 800;
+}

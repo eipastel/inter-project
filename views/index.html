@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Inter Project</title>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="barra-navegacao">
+        <div class="opcoes-menu">
+            <span class="material-icons">home</span>
+            <a href="#" id="link-inicio"><h2>Início</h2></a>
+        </div>
+
+        <div class="opcoes-menu">
+            <span class="material-icons">group</span>
+            <a href="#" id="link-comunidade"><h2>Comunidade</h2></a>
+        </div>
+
+        <div class="opcoes-menu">
+            <span class="material-icons">person</span>
+            <a href="#" id="perfil-link"><h2>Perfil</h2></a>
+        </div>
+        
+        <button class="botao-sair" onclick="sairDaConta()">Sair</button>
+        <div class="cadastro-e-login">
+            <button class="botao-login" onclick="irParaLogin()">Entrar</button>
+            <p>Não tem uma conta? <a class="cadastre-se" href="/cadastro">Cadastre-se</a></p>
+        </div>
+    </nav>
+
+  
+    <!-- Seção principal -->
+    <main>
+        <div class="cabecalho">
+            <h2>Inter Project</h2>
+        </div>
+
+        <div class="caixa-postagem">
+            <form>
+                <div class="caixa-postagem-input">
+                    <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
+                    <input id="mensagem-nova-att" type="text" placeholder="Qual a novidade?">
+                    <button class="botao-postar" id="botao-postar">Postar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="atualizacoes">
+        </div>
+    </main>
+
+    <!-- Seção lateral -->
+    <aside>
+
+        <div class="entrada-aside">
+            <span class="material-icons icone-busca-aside">search</span>
+            <input type="text" placeholder="Pesquisar">
+ 
+        </div>
+
+        <div class="container-aside">
+            <h2>Principal Atualização</h2>
+            <p>Em breve!</p>
+        </div>
+        
+    </aside>
+    
+</body>
+<script src="js/index.js"></script>
+</html>
