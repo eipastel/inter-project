@@ -68,7 +68,7 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
             senha
         };
         // Enviando o usuário para o backend
-        fetch('http://localhost:3000/registrar', {
+        fetch('https://inter-project-d39u.onrender.com/registrar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

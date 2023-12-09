@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 // Função para carregar postagens
 async function carregarPostagens() {
     try {
-        const response = await fetch('http://localhost:3000/postagens');
+        const response = await fetch('https://inter-project-d39u.onrender.com/postagens');
         const data = await response.json();
         const postagens = data.postagensFormatadas;
         const todasAtualizacoes = document.querySelector('.atualizacoes');
@@ -116,7 +116,7 @@ botaoPostar.addEventListener('click', async (evento) => {
     }
 
     // Enviando a postagem para o backend
-    fetch('http://localhost:3000/postar', {
+    fetch('https://inter-project-d39u.onrender.com/postar', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ async function descobrirUsuarioLogado() {
         }
 
         // Faça a requisição para o backend com o token no cabeçalho
-        const response = await fetch('http://localhost:3000/usuarioLogado', {
+        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

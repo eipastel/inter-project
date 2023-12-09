@@ -30,7 +30,7 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
     }
 
     if(emailValido && senhaValida) {
-        fetch('http://localhost:3000/logar', {
+        fetch('https://inter-project-d39u.onrender.com/logar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
