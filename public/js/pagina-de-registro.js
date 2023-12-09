@@ -61,47 +61,45 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
 
     // Se todos os campos forem válidos, criando o usuário
     if(nomeValido && usuarioValido && emailValido && senhaValida && confirmacaoSenhaValida) {
-        const novoUsuario = {
-            nome,
-            usuario,
-            email,
-            senha
-        };
-        // Enviando o usuário para o backend
-        fetch('https://inter-project-d39u.onrender.com/registrar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nome: nome,
-                usuario: usuario,
-                email: email,
-                senha: senha
-            }),
-            })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error === "USER_ALREADY_EXISTS") {
-                // Tratando caso o usuário já exista
-      
-            } else {
-                // Cadastro Bem-Sucedido
-                console.log("Sucesso ao cadastrar!");
 
-                // Armazenando o token JWT
-                localStorage.setItem('jwtToken', data.token);
+        try {
+            // Enviando o usuário para o backend
+            fetch('http://localhost:3000/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nome: nome,
+                    usuario: usuario,
+                    email: email,
+                    senha: senha
+                }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.error === "USER_ALREADY_EXISTS") {
+                    // Tratando caso o usuário já exista
 
-                // Definindo um tempo de X (nesse caso 1000 = 1 segundo) segundos para redirecionar
-                setTimeout(()=>{
-                window.location.href = '../index.html'
-                }, 1000)
-            }
-            })
-            // Caso haja algum erro não identificado do servidor ou outro.
-            .catch((error) => {
-                console.error('Erro não identificado:', error);
-            });
+                } else {
+                    // Armazenando o token JWT
+                    localStorage.setItem('jwtToken', data.token);
+
+                    // Definindo um tempo de X (nesse caso 1000 = 1 segundo) segundos para redirecionar
+                    // setTimeout(()=>{
+                    // window.location.href = '/views/index.html'
+                    // }, 1500)
+                }
+                })
+                // Caso haja algum erro não identificado do servidor ou outro.
+                .catch((error) => {
+                    console.error('Erro não identificado:', error);
+                });
+        } catch(error) {
+            console.error("Erro não identificado: ", error)
+        }
+
+        
 
 
     } else {

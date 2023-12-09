@@ -1,5 +1,5 @@
 // Variáveis iniciais
-let botaoPostar = document.getElementById('botao-postar');
+let botaoPostar = document.querySelector('.botao-postar');
 let cadastroELogin = document.querySelector('.cadastro-e-login');
 let botaoSair = document.querySelector('.botao-sair');
 let listaDeAtt = [];
