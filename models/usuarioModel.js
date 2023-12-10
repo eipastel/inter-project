@@ -79,8 +79,6 @@ async function logar({ email, senha }) {
     // Gera novo token JWT e atualiza no banco de dados
     const token = jwt.sign({ email }, TOKEN_KEY, { expiresIn: '1h' });
 
-    console.log('Novo Token:', token);
-
     const resultadoAttBanco = await db`
       UPDATE usuarios SET token = ${token} WHERE id = ${usuario.id}
     `;

@@ -15,13 +15,13 @@ html {
 }
 
 body {
+    width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center;
     background-color: #000;
     color: #fff;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
     padding: 0 2rem;
     max-width: 1500px;
 }
@@ -73,7 +73,7 @@ body {
     width: 220px;
 }
 
-.botao-login, .botao-sair {
+.botao-login, .botao-sair, .reserva {
     width: 100%;
     height: 50px;
     background-color: var(--azul-clarinho);
@@ -88,11 +88,11 @@ body {
     margin-top: 1.5rem;
 }
 
-.botao-sair {
+.botao-sair, .reserva {
     display: none;
 }
 
-.botao-login:hover, .botao-sair:hover{
+.botao-login:hover, .botao-sair:hover, .reserva:hover{
     background-color: #1A8CD8;
 }
 
@@ -136,7 +136,7 @@ body {
     background-color: #3b3b3b73;
     padding: 10px;
     border-radius: 20px;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-left: 20px;
 }
 
@@ -161,7 +161,8 @@ main {
     scrollbar-width: none;
     border-right: 1px solid #ffffff42;
     border-left: 1px solid #ffffff42;
-    overflow-x:hidden
+    overflow-x: hidden;
+    height: 100%;
 }
 
 main::-webkit-scrollbar {
@@ -180,7 +181,7 @@ main::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
     height: 100px;
-    min-width: 548px;
+    min-width: 100%;
 }
 
 .caixa-postagem form {
@@ -209,15 +210,20 @@ main::-webkit-scrollbar {
     resize: none;
 }
 
+.caixa-postagem-input textarea::-webkit-scrollbar {
+    display: none;
+}
+
 .caixa-postagem-input button {
     background-color: var(--azul-clarinho);
     color: white;
     font-weight: bold;
     border-radius: 30px;
     border: none;
-    width: 80px;
+    width: 90px;
     height: 50px;
     cursor: pointer;
+    font-size: .95rem;
 }
 
 .caixa-postagem-input button:hover {
@@ -311,6 +317,8 @@ aside {
     padding: 20px;
     background-color: #30303049;
     border-radius: 20px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .container-aside h2 {
@@ -318,16 +326,136 @@ aside {
     font-weight: 800;
 }
 
-
-
 /* Telas menores */
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
 
-    .opcoes-menu a {
-        display: flex;
+    .barra-navegacao {
+        width: 60px;
+    }
+
+    .opcoes-menu {
+        padding: .9rem;
+        margin: 0;
+    }
+
+    .opcoes-menu h2{
+        display: none;
+    }
+
+    .botao-sair, .botao-login, .reserva {
+        font-size: 0;
+        width: 55px;
+    }
+
+    .botao-sair i, .botao-login i, .reserva i {
+        font-size: 1.4rem;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cadastro-e-login p {
+        display: none;
+    }
+
+    aside {
+        display: none;
+    }
+
+
+}
+
+@media (max-width: 675px) {
+
+    body {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+    }
+
+    main {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border: none;
+    }
+
+    .barra-navegacao {
+        margin: 0;
+        width: 100%;
+        flex-direction: row;
         align-items: center;
+        justify-content: space-around;
+        border-bottom: 1px solid #ffffff42;
+        padding: 5px;
+    }
+
+    .opcoes-menu {
+        width: 3.7rem;
+        padding: 0;
+        margin: 0;
+        display: flex;
         justify-content: center;
     }
 
+    .cadastro-e-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.7rem;
+    }
+
+    .cadastro-e-login button, .botao-sair {
+        margin: 0;
+    }
+
+    .cabecalho {
+        justify-content: space-around;
+    }
+
+    .caixa-postagem-input {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .caixa-postagem-input button {
+        margin-right: 1rem;
+    }
+}
+
+@media (max-width: 550px) {
+
+    main {
+        width: 100%;
+    }
+
+    .barra-navegacao {
+        width: 100%;
+        z-index: 1;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .cabecalho, .container-comunidade, .botao-postar {
+        display: none;
+    }
+
+    .caixa-postagem-input {
+        justify-content: space-around;
+    }
+
+    .caixa-postagem-input img {
+        display: none;
+    }
+
+    .caixa-postagem-input textarea {
+        width: 100%;
+    }
+
+    .reserva {
+        padding: 0;
+        display: block;
+        margin: 0;
+    }
 
 }
