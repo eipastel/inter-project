@@ -36,7 +36,6 @@ body {
 
 .container h1 {
   font-size: 3rem;
-  margin-bottom: 1rem;
 }
 
 .input-container {
@@ -49,7 +48,7 @@ body {
   max-width: 700px;
 }
 
-.input-container input {
+.input {
   margin: 7px;
   width: 100%;
   height: 50px;
@@ -95,6 +94,65 @@ body {
   text-decoration: underline;
   color: #1A8CD8;
 }
+
+/* Adições/remoções dinâmicas */
+.erro-ao-registrar {
+  border: 1px solid rgb(255, 53, 53);
+}
+
+.mensagem-de-erro {
+  display: none;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  text-align: left;
+  margin-left: 1.6rem;
+  color: rgb(255, 53, 53);
+}
+
+.mensagem-de-sucesso {
+  display: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  color: rgb(119, 197, 119);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-conteudo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: red;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.modal-conteudo p {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.fechar-modal {
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 30px;
+}
+
 
 /* Responsivo */
 @media (max-width: 700px) {

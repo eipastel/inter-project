@@ -14,22 +14,30 @@
 <body>
   <main class="container">
     <h1>Registre-se no Inter Project</h1>
+    <div id="meu-modal" class="modal">
+      <div class="modal-conteudo">
+        <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+        <p>Erro: Usuário já existente!</p>
+      </div>
+    </div>
     <div class="form-container">
       <form>
+        <h2 class="mensagem-de-erro">Campo(s) inválido(s)!</h2>
+        <h2 class="mensagem-de-sucesso">Confirmando informações...</h2>
         <div class="input-container">
-          <input type="text" id="nome" placeholder="Nome">
+          <input type="text" class="input" id="nome" placeholder="Nome">
         </div>
         <div class="input-container">
-          <input type="text" id="usuario" placeholder="Usuário">
+          <input type="text" class="input" id="usuario" placeholder="Usuário">
         </div>
         <div class="input-container">
-          <input type="text" id="email" placeholder="E-mail">
+          <input type="text" class="input " id="email" placeholder="E-mail">
         </div>
         <div class="input-container">
-          <input type="password" id="senha" placeholder="Senha">
+          <input type="password" class="input " id="senha" placeholder="Senha">
         </div>
         <div class="input-container">
-        <input type="password" id="confirmacaoSenha" placeholder="Confirme sua senha">
+        <input type="password" class="input " id="confirmacaoSenha" placeholder="Confirme sua senha">
         </div>
         <button class="register-button">Registrar-se</button>
       </form>
