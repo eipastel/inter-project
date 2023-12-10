@@ -4,31 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+
     <link rel="stylesheet" href="/css/index.css">
+
     <title>Inter Project</title>
 </head>
 <body>
     <!-- Barra de navegação -->
     <nav class="barra-navegacao">
         <div class="opcoes-menu">
-            <span class="material-icons">home</span>
-            <a href="#" id="link-inicio"><h2>Início</h2></a>
+            <i class="fa-solid fa-house"></i>
+            <h2>Início</h2>
         </div>
 
         <div class="opcoes-menu">
-            <span class="material-icons">group</span>
-            <a href="#" id="link-comunidade"><h2>Comunidade</h2></a>
+            <i class="fa-solid fa-user-group"></i>
+            <h2>Comunidade</h2>
         </div>
 
         <div class="opcoes-menu">
-            <span class="material-icons">person</span>
-            <a href="#" id="perfil-link"><h2>Perfil</h2></a>
+            <i class="fa-solid fa-user"></i>
+            <h2>Perfil</h2>
         </div>
         
-        <button class="botao-sair" onclick="sairDaConta()">Sair</button>
+        <button class="botao-sair" onclick="sairDaConta()"><i class="fa-solid fa-door-open"></i> Sair</button>
         <div class="cadastro-e-login">
-            <button class="botao-login" onclick="irParaLogin()">Entrar</button>
+            <button class="botao-login" onclick="irParaLogin()"><i class="fa-solid fa-cloud-bolt"></i> Entrar</button>
             <p>Não tem uma conta? <a class="cadastre-se" href="/cadastro">Cadastre-se</a></p>
         </div>
     </nav>
@@ -37,14 +41,19 @@
     <!-- Seção principal -->
     <main>
         <div class="cabecalho">
-            <h2>Inter Project</h2>
+            <h2>INTER PROJECT</h2>
+
+            <div class="barra-de-pesquisa">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Pesquisar">
+            </div>
         </div>
 
         <div class="caixa-postagem">
             <form>
                 <div class="caixa-postagem-input">
                     <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
-                    <input id="mensagem-nova-att" type="text" placeholder="Qual a novidade?">
+                    <textarea id="mensagem-nova-att" cols="30" rows="1" placeholder="Qual a novidade?"></textarea>
                     <button class="botao-postar" id="botao-postar">Postar</button>
                 </div>
             </form>
@@ -56,13 +65,6 @@
 
     <!-- Seção lateral -->
     <aside>
-
-        <div class="entrada-aside">
-            <span class="material-icons icone-busca-aside">search</span>
-            <input type="text" placeholder="Pesquisar">
- 
-        </div>
-
         <div class="container-aside">
             <h2>Principal Atualização</h2>
             <p>Em breve!</p>

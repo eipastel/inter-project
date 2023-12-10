@@ -51,7 +51,7 @@ async function carregarPostagens() {
                     <div class="post-header-text">
                         <h3>${postagens[index].nomeUsuario}
                             <span class="header-icon-section">
-                                <span class="material-icons post-badge">verified</span>${postagens[index].usuario}
+                                @${postagens[index].usuario}
                             </span>
                         </h3>
                     </div>
@@ -63,8 +63,8 @@ async function carregarPostagens() {
                 </div>
         
                 <div class="post-footer">
-                    <span class="material-icons">chat</span>
-                    <span class="material-icons">favorite_border</span>
+                    <i class="fa-regular fa-comment"></i>
+                    <i class="fa-regular fa-heart"></i>
                 </div>
         
             </div>
@@ -148,7 +148,7 @@ botaoPostar.addEventListener('click', async (evento) => {
             <div class="post-header-text">
                 <h3>${usuarioLogado.nome}
                     <span class="header-icon-section">
-                        <span class="material-icons post-badge">verified</span>@${usuarioLogado.usuario}
+                        @${usuarioLogado.usuario}
                     </span>
                 </h3>
             </div>
@@ -160,8 +160,8 @@ botaoPostar.addEventListener('click', async (evento) => {
         </div>
 
         <div class="post-footer">
-            <span class="material-icons">chat</span>
-            <span class="material-icons">favorite_border</span>
+            <i class="fa-regular fa-comment"></i>
+            <i class="fa-regular fa-heart"></i>
         </div>
 
     </div>

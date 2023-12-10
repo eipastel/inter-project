@@ -85,10 +85,7 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
                     // Armazenando o token JWT
                     localStorage.setItem('jwtToken', data.token);
 
-                    // Definindo um tempo de X (nesse caso 1000 = 1 segundo) segundos para redirecionar
-                    // setTimeout(()=>{
-                    // window.location.href = '/views/index.html'
-                    // }, 1500)
+                    window.location.href = '/'
                 }
                 })
                 // Caso haja algum erro não identificado do servidor ou outro.
