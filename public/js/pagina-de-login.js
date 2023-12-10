@@ -39,7 +39,7 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
         mensagemDeErro.style.display = "none";
         mensagemDeSucesso.style.display = "block";
 
-        fetch('http://localhost:3000/logar', {
+        fetch('https://inter-project-d39u.onrender.com/logar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
