@@ -6,6 +6,8 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
     // Variáveis iniciais
     let emailInput = document.getElementById('email');
     let senhaInput = document.getElementById('senha');
+    let mensagemDeErro = document.querySelector('.mensagem-de-erro');
+    let mensagemDeSucesso = document.querySelector('.mensagem-de-sucesso');
 
     // Valores dos campos
     let email = emailInput.value;
@@ -17,19 +19,26 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
 
     if(email.length >= 9) {
         emailValido = true;
+        emailInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso o e-mail não esteja devidamente preenchido
         emailValido = false;
+        emailInput.classList.add("erro-ao-registrar");
     }
 
     if(senha.length > 2) {
         senhaValida = true;
+        senhaInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso a senha não esteja devidamente preenchida
         senhaValida = false;
+        senhaInput.classList.add("erro-ao-registrar");
     }
 
     if(emailValido && senhaValida) {
+        mensagemDeErro.style.display = "none";
+        mensagemDeSucesso.style.display = "block";
+
         fetch('https://inter-project-d39u.onrender.com/logar', {
             method: 'POST',
             headers: {
@@ -42,21 +51,17 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error === "USER_NOT_FOUND") {
+            if (data.error === "USER_NOT_FOUND" || data.error === "INVALID_PASSWORD") {
                 // Tratando erro de usuário não encontrado
+                mensagemDeSucesso.style.display = "none";
+                mensagemDeErro.style.display = "block";
                 emailInput.focus();
-            } else if(data.error === "INVALID_PASSWORD") {
-                // Tratando erro de senha incorreta
-                senhaInput.focus();
             } else if(data.error) {
-                console.error(data.error);
+                // Tratando caso aconteça algum outro erro
             } else {
                 if (data.token) {
                     localStorage.setItem('jwtToken', data.token);
-                    setInterval(() => {
-                        window.location.href = '/';
-                    }, 1000);
-
+                    window.location.href = '/';
                 } else {
                     console.error('Token não encontrado na resposta do servidor');
                 }

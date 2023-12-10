@@ -13,23 +13,21 @@
 
 <body>
   <main class="container">
-    <h1>Entrar no Inter Project</h1>
-    <div class="container">
+    <h1>Entre no Inter Project</h1>
+    <h2 class="mensagem-de-erro">E-mail e/ou senha incorreto(s)!</h2>
+    <h2 class="mensagem-de-sucesso">Confirmando credenciais...</h2>
+    <div class="form-container">
       <form>
-        <div class="inputs">
-          <label class="email" for="email">Email</label><br>
-          <input type="text" id="email">
+        <div class="input-container">
+          <input type="text" class="input" id="email" placeholder="Email">
         </div>
-        <div class="inputs">
-          <label class="senha" for="senha">Senha</label><br>
-          <input type="password" id="senha">
+        <div class="input-container">
+          <input type="password" class="input" id="senha" placeholder="Senha">
         </div>
-        <br>
         <button class="login-button" type="submit">Entrar</button>
       </form>
-      <div class="links container">
-        <a href="/">Voltar para tela inicial</a>
-        <span class="ponto"></span>
+      <div class="links-container">
+        <a href="/">Voltar para tela inicial</a> • 
         <a href="/cadastro">Não possui uma conta?</a>
       </div>
     </div>

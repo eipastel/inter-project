@@ -31,9 +31,9 @@ async function logar(req, res) {
     if (resultadoLogin.error) {
       // Lida com erros de login
       if (resultadoLogin.error === 'USER_NOT_FOUND') {
-        return res.status(401).json({ error: 'Usuário não encontrado.' });
+        return res.status(401).json({ error: 'USER_NOT_FOUND' });
       } else if (resultadoLogin.error === 'INVALID_PASSWORD') {
-        return res.status(401).json({ error: 'Senha inválida.' });
+        return res.status(401).json({ error: 'INVALID_PASSWORD' });
       } else {
         return res.status(500).json({ error: 'Erro interno do servidor.' });
       }
@@ -54,7 +54,6 @@ async function descobrirUsuarioLogado(req, res) {
     const usuarioLogado = await usuarioModel.descobrirUsuarioLogado(token);
 
     if (!usuarioLogado || !usuarioLogado.nome) {
-      console.error("Usuário não encontrado ou sem nome!");
       return res.status(401).json({ error: "Usuário não autenticado" });
     }
 
@@ -62,7 +61,6 @@ async function descobrirUsuarioLogado(req, res) {
     return res.status(200).json(usuarioLogado);
 
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Erro interno do servidor" });
   }
 }

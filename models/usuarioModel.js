@@ -125,7 +125,7 @@ async function descobrirUsuarioLogado(theToken) {
     return usuarioConvertido;
 
   } catch(error) {
-    console.error(error);
+    // Tratamento de erros para requisição de usuário logado.
   }
 }
 

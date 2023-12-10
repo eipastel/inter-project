@@ -1,172 +1,138 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
-
-:root {
-  --blue: #8ed0f9;
-  --blue2: #1da1f2;
-  --gray: rgb(101, 119, 134);
+/* Reset inicial */
+html {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  outline: none;
-}
-
-body,
-main,
-header,
-h1,
-h2 {
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
-button,
-input,
-input:focus,
-label {
-  background-color: transparent;
-  box-shadow: none;
-  border: none;
-  outline: none;
-}
-
-a {
-  text-decoration: none;
-}
-
-.container {
-  display: block;
-  max-width: 960px;
-  width: 100%;
-  margin: 0 auto;
+:root {
+  --azul-clarinho: #1D9BF0;
+  --quase-branco: #e6ecf0;
 }
 
 body {
-  font-family: "Montserrat", sans-serif;
-}
-
-img {
   width: 100%;
-  display: block;
-}
-
-.logo img {
-  width: 65px;
-  margin: 8px auto;
-}
-
-main h1 {
-  text-align: center;
-  font-size: 24px;
-}
-
-main form {
-  display: block;
-  margin-top: 32px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-main form .inputs {
-  margin: 16px auto;
-  width: 100%;
-  max-width: 520px;
-  background-color: rgb(245, 248, 250);
-  font-size: 20px;
-}
-
-main form .inputs label {
-  padding-left: 8px;
-  color: rgb(101, 119, 134);
-  font-size: 14px;
-  display: inline-block;
-}
-
-main form .inputs:focus-within label {
-  color: var(--blue2);
-}
-
-main form .inputs input[type="text"],
-main form .inputs input[type="password"] {
-  width: 100%;
-  padding: 8px;
-  height: 30px;
-  font-size: 18px;
-  border-bottom: 2px solid var(--gray);
-  border-radius: 3px;
-  transition: 200ms;
-}
-
-main form .inputs input[type="text"]:focus,
-main form .inputs input[type="password"]:focus {
-  border-bottom: 2px solid var(--blue2);
-}
-
-main form .inputs label:focus-within {
-  color: var(--blue2);
-}
-
-main form .login-button {
-  display: block;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-color: #000;
+  color: #fff;
   margin: 0 auto;
+  padding: 0 2rem;
+  max-width: 1500px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.container h1 {
+  font-size: 3rem;
+  margin-bottom: 5px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-container {
+  max-width: 700px;
+}
+
+.input {
+  margin: 10px;
+  width: 100%;
+  height: 50px;
+  outline: none;
+  border: 1px solid #b8b8b888;
+  font-size: 1.4rem;
+  background: none;
   color: white;
-  font-size: 14px;
+  border-radius: 35px;
+  padding: 1.7rem;
+}
+
+.login-button {
+  width: 100%;
+  height: 50px;
+  background-color: var(--azul-clarinho);
+  border: none;
+  padding: 3px;
+  text-align: center;
+  font-size: 1.4rem;
+  color: white;
   font-weight: bold;
-  width: 520px;
-  height: 45px;
-  background-color: var(--blue);
-  border-radius: 30px;
-  transition: 400ms;
-  text-align: center;
-}
-
-main form .login-button:hover {
-  background-color: #1da1f2;
+  border-radius: 35px;
   cursor: pointer;
+  margin-top: .8rem;
 }
 
-.links {
-  margin-top: 32px;
-  text-align: center;
+.login-button:hover {
+  background-color: #1A8CD8;
 }
 
-.links a {
-  color: #1da1f2;
-  font-size: 14px;
+.links-container {
+  margin-top: 1.1rem;
 }
 
-.links a:hover {
+.links-container a {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: var(--azul-clarinho);
+}
+
+.links-container a:hover {
   text-decoration: underline;
+  color: #1A8CD8;
 }
 
-.ponto:after {
-  content: ".";
-  position: relative;
-  top: -4px;
+/* Adições/remoções dinâmicas */
+.erro-ao-registrar {
+  border: 1px solid rgb(255, 53, 53);
 }
 
-@media only screen and (min-width: 720px) {
-  .container {
-    max-width: 520px;
-  }
-  main form .login-button {
-    max-width: 520px;
-  }
+.mensagem-de-erro {
+  display: none;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  text-align: left;
+  color: rgb(255, 53, 53);
 }
 
-@media only screen and (max-width: 719.9px) {
-  .container {
-    max-width: 300px;
+.mensagem-de-sucesso {
+  display: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  color: rgb(119, 197, 119);
+}
+
+/* Responsivo */
+@media (max-width: 700px) {
+
+  .container h1 {
+    font-size: 0;
+    color: white;
   }
-  main form .login-button {
-    max-width: 300px;
+
+  .input-container input {
+    height: 30px;
   }
-  .links a {
-    display: block;
-  }
-  .ponto:after {
-    display: none;
+
+  .container h1::after {
+    content: "Faça o Login!";
+    font-size: 2.5rem;
   }
 }
