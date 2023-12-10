@@ -28,7 +28,7 @@ async function carregarPostagens(req, res) {
         const postagensFormatadas = await atualizacaoModel.carregarPostagens();
 
         if(!postagensFormatadas) {
-            console.error("Postagens não encontradas!");
+            // Tratando se não encontrar nenhuma postagem
             return
         }
 

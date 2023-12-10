@@ -43,7 +43,7 @@ async function carregarPostagens() {
     `;
 
     if (!todasPostagens || todasPostagens.length === 0) {
-      console.error("Não há nenhuma postagem!");
+      // Tratando se não encontrar nenhuma publicação
       return null;
   }
 
@@ -72,6 +72,5 @@ module.exports = {
     criarTabelas,
     postar,
     carregarPostagens,
-
 
 };

@@ -7,7 +7,9 @@ let listaDeAtt = [];
 let tipoUsuario;
 
 document.addEventListener("DOMContentLoaded", async function() {
-    
+    // Variáveis iniciais
+    let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
+
     // Adicionando dois ouvintes de evento para os 2 botões de postar
     botaoPostar.addEventListener("click", function(evento) {
         postar(evento);
@@ -17,9 +19,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         postar(evento);
     });
 
-
-    await carregarPostagens();
-    const usuarioLogado = await descobrirUsuarioLogado()
+    const usuarioLogado = await descobrirUsuarioLogado();
+    carregarPostagens();
 
     if(usuarioLogado) {
         cadastroELogin.remove();
@@ -28,10 +29,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         if(usuarioLogado.tipoUsuario === 1) {
             // Condições para o usuário administrador
             tipoUsuario = "Administrador"
+
         } else if(usuarioLogado.tipoUsuario === 2) {
             // Condições para o usuário espectador
+            mensagemNovaAttInput.placeholder = "Você não tem permissão";
+            mensagemNovaAttInput.disabled = "true";
             tipoUsuario = "Espectador"
-
 
         } else if(usuarioLogado.tipoUsuario === 3) {
             // Condições para o usuário verificado
@@ -40,12 +43,14 @@ document.addEventListener("DOMContentLoaded", async function() {
     } else {
     
     }
+
+    console.log(`Você está logado como ${tipoUsuario}`)
 });
 
 // Função para carregar postagens
 async function carregarPostagens() {
     try {
-        const response = await fetch('https://inter-project-d39u.onrender.com/postagens');
+        const response = await fetch('http://localhost:3000/postagens');
         const data = await response.json();
         const postagens = data.postagensFormatadas;
         const todasAtualizacoes = document.querySelector('.atualizacoes');
@@ -99,91 +104,98 @@ async function postar(evento) {
     evento.preventDefault();
     evento.stopPropagation();
 
-    // Variáveis padrões
-    let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
-    let mensagemNovaAtt = mensagemNovaAttInput.value;
+    // Se for um usuário Verificado ou Administrador
+    if(tipoUsuario === "Verificado" || tipoUsuario === "Administrador") {
+        // Variáveis padrões
+        let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
+        let mensagemNovaAtt = mensagemNovaAttInput.value;
 
-    if(!mensagemNovaAtt) {
-        console.error("Preencha o campo para fazer uma postagem!")
-        return;
-    }
+        if(!mensagemNovaAtt) {
+            console.error("Preencha o campo para fazer uma postagem!")
+            return;
+        }
 
-    // Limpando o campo da atualização
-    mensagemNovaAttInput.value = "";
+        // Limpando o campo da atualização
+        mensagemNovaAttInput.value = "";
 
-    // Definindo qual o usuário logado
-    const usuarioLogado = await descobrirUsuarioLogado();
+        // Definindo qual o usuário logado
+        const usuarioLogado = await descobrirUsuarioLogado();
 
-    // Verificando se o usuário foi obtido corretamente
-    if (!usuarioLogado) {
-        console.log("Usuário não encontrado. A atualização não será postada.");
-        return;
-    }
+        // Verificando se o usuário foi obtido corretamente
+        if (!usuarioLogado) {
+            console.log("Usuário não encontrado. A atualização não será postada.");
+            return;
+        }
 
-    // Criando o objeto da nova atualização
-    let novaAtt = {
-        mensagemNovaAtualizacao: mensagemNovaAtt,
-        idUsuario: usuarioLogado.id,
-        criadoEm: dataAtual()
-    }
+        // Criando o objeto da nova atualização
+        let novaAtt = {
+            mensagemNovaAtualizacao: mensagemNovaAtt,
+            idUsuario: usuarioLogado.id,
+            criadoEm: dataAtual()
+        }
 
-    // Enviando a postagem para o backend
-    fetch('https://inter-project-d39u.onrender.com/postar', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('jwtToken'),
-    },
-    body: JSON.stringify({
-        mensagemNovaAtualizacao: novaAtt.mensagemNovaAtualizacao,
-        idUsuario: novaAtt.idUsuario,
-        criadoEm: novaAtt.criadoEm
-    }),
-    })
-    .then(response => response.json())
-    // Caso haja algum erro não identificado do servidor ou outro.
-    .catch((error) => {
-        console.error('Erro não identificado:', error);
-    });
+        // Enviando a postagem para o backend
+        fetch('http://localhost:3000/postar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwtToken'),
+        },
+        body: JSON.stringify({
+            mensagemNovaAtualizacao: novaAtt.mensagemNovaAtualizacao,
+            idUsuario: novaAtt.idUsuario,
+            criadoEm: novaAtt.criadoEm
+        }),
+        })
+        .then(response => response.json())
+        // Caso haja algum erro não identificado do servidor ou outro.
+        .catch((error) => {
+            console.error('Erro não identificado:', error);
+        });
 
-    // Mostrando a postagem na tela
-    let todasAtualizacoes = document.querySelector('.atualizacoes');
-    let novaDiv = document.createElement("div");
-    novaDiv.innerHTML = `
-    <div class="post">
-    <div class="post-profile-image">
-        <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
-    </div>
-
-    <div class="post-body">
-        <div class="post-header">
-            <div class="post-header-text">
-                <h3>${usuarioLogado.nome}
-                    <span class="header-icon-section">
-                        @${usuarioLogado.usuario}
-                    </span>
-                </h3>
-            </div>
-
-            <div class="post-header-discription">
-                <p>${novaAtt.mensagemNovaAtualizacao}</p>
-            </div>
-            
+        // Mostrando a postagem na tela
+        let todasAtualizacoes = document.querySelector('.atualizacoes');
+        let novaDiv = document.createElement("div");
+        novaDiv.innerHTML = `
+        <div class="post">
+        <div class="post-profile-image">
+            <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
         </div>
 
-        <div class="post-footer">
-            <i class="fa-regular fa-comment"></i>
-            <i class="fa-regular fa-heart"></i>
-        </div>
+        <div class="post-body">
+            <div class="post-header">
+                <div class="post-header-text">
+                    <h3>${usuarioLogado.nome}
+                        <span class="header-icon-section">
+                            @${usuarioLogado.usuario}
+                        </span>
+                    </h3>
+                </div>
 
-    </div>
-    </div>
-        `
+                <div class="post-header-discription">
+                    <p>${novaAtt.mensagemNovaAtualizacao}</p>
+                </div>
+                
+            </div>
+
+            <div class="post-footer">
+                <i class="fa-regular fa-comment"></i>
+                <i class="fa-regular fa-heart"></i>
+            </div>
+
+        </div>
+        </div>
+            `
         if (todasAtualizacoes.firstChild) {
             todasAtualizacoes.insertBefore(novaDiv, todasAtualizacoes.firstChild);
         } else {
             todasAtualizacoes.appendChild(novaDiv);
         }
+    } else {
+        // Se for um usuário do tipo Espectador
+        alert(`Como ${tipoUsuario} você não tem permissão para postar!`);
+    }
+
 }
 
 // Funções utilitárias
@@ -220,7 +232,7 @@ async function descobrirUsuarioLogado() {
         }
 
         // Faça a requisição para o backend com o token no cabeçalho
-        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
+        const response = await fetch('http://localhost:3000/usuarioLogado', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
