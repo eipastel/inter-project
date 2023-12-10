@@ -1,11 +1,23 @@
 // Variáveis iniciais
-let botaoPostar = document.querySelector('.botao-postar');
+let botaoPostar = document.getElementById('botao-postar');
+let botaoTelasMenores = document.getElementById('botao-telas-menores');
 let cadastroELogin = document.querySelector('.cadastro-e-login');
 let botaoSair = document.querySelector('.botao-sair');
 let listaDeAtt = [];
 let tipoUsuario;
 
 document.addEventListener("DOMContentLoaded", async function() {
+    
+    // Adicionando dois ouvintes de evento para os 2 botões de postar
+    botaoPostar.addEventListener("click", function(evento) {
+        postar(evento);
+    });
+
+    botaoTelasMenores.addEventListener("click", function(evento) {
+        postar(evento);
+    });
+
+
     await carregarPostagens();
     const usuarioLogado = await descobrirUsuarioLogado()
 
@@ -83,9 +95,9 @@ async function carregarPostagens() {
     }
 }
 
-// Escutando o botão do formulário para criar post
-botaoPostar.addEventListener('click', async (evento) => {
+async function postar(evento) {
     evento.preventDefault();
+    evento.stopPropagation();
 
     // Variáveis padrões
     let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
@@ -117,17 +129,17 @@ botaoPostar.addEventListener('click', async (evento) => {
 
     // Enviando a postagem para o backend
     fetch('https://inter-project-d39u.onrender.com/postar', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('jwtToken'),
-      },
-      body: JSON.stringify({
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('jwtToken'),
+    },
+    body: JSON.stringify({
         mensagemNovaAtualizacao: novaAtt.mensagemNovaAtualizacao,
         idUsuario: novaAtt.idUsuario,
         criadoEm: novaAtt.criadoEm
-      }),
-      })
+    }),
+    })
     .then(response => response.json())
     // Caso haja algum erro não identificado do servidor ou outro.
     .catch((error) => {
@@ -138,7 +150,7 @@ botaoPostar.addEventListener('click', async (evento) => {
     let todasAtualizacoes = document.querySelector('.atualizacoes');
     let novaDiv = document.createElement("div");
     novaDiv.innerHTML = `
-<div class="post">
+    <div class="post">
     <div class="post-profile-image">
         <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
     </div>
@@ -165,14 +177,14 @@ botaoPostar.addEventListener('click', async (evento) => {
         </div>
 
     </div>
-</div>
+    </div>
         `
         if (todasAtualizacoes.firstChild) {
             todasAtualizacoes.insertBefore(novaDiv, todasAtualizacoes.firstChild);
         } else {
             todasAtualizacoes.appendChild(novaDiv);
         }
-});
+}
 
 // Funções utilitárias
 function dataAtual() {
