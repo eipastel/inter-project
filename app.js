@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const atualizacaoRoutes = require('./routes/atualizacaoRoutes');
+const perfilRoutes = require('./routes/perfilRoutes');
 const path = require('path');
 
 dotenv.config();
@@ -14,10 +15,12 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // Middleware express.static para servir arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('./public'));
 
 app.use(usuarioRoutes);
 app.use(atualizacaoRoutes);
+app.use(perfilRoutes);
 
 // Middleware para tratamento de erros
 app.use((err, req, res, next) => {

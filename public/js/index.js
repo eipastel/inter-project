@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             // Condições para o usuário administrador
             tipoUsuario = "Administrador"
 
-        } else if(usuarioLogado.tipoUsuario === 2) {
+        } else if(usuarioLogado.tipoUsuario === 2 || !usuarioLogado) {
             // Condições para o usuário espectador
             mensagemNovaAttInput.placeholder = "Você não tem permissão";
             mensagemNovaAttInput.disabled = "true";
@@ -43,8 +43,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     } else {
     
     }
-
-    console.log(`Você está logado como ${tipoUsuario}`)
 });
 
 // Função para carregar postagens
@@ -93,9 +91,7 @@ async function carregarPostagens() {
         }
     } catch (error) {
         console.error('Erro ao carregar postagens:', error);
-    
         console.error('Detalhes do erro:', error.message, error.response);
-    
         console.error('Tipo do erro:', error.constructor.name);
     }
 }
@@ -270,4 +266,12 @@ async function descobrirUsuarioLogado() {
     }
 }
 
+document.querySelector('.container-perfil').addEventListener('click', () => {
+    let perfilDo = prompt("O perfil de qual usuário você gostaria de acessar?");
 
+    // Verifica se o usuário inseriu algo
+    if (perfilDo) {
+        // Redireciona para a página de login com o nome do usuário como parte da URL
+        window.location.href = `/perfil/${perfilDo}`;
+    }
+})
