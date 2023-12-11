@@ -19,7 +19,7 @@ async function obterPerfil() {
         }
         const perfilDoUsuario = await response.json();
         nome.innerHTML = `<h2 class="nome">${perfilDoUsuario.nome}</h2>`
-        usuario.innerHTML = `<h2 class="nome">${usuarioDoPerfil}</h2>`
+        usuario.innerHTML = `<h2 class="nome">@${usuarioDoPerfil}</h2>`
 
     } catch(error) {
         console.error("Erro durante a solicitação:", error);

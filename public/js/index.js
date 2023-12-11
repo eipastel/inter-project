@@ -6,6 +6,7 @@ let botaoSair = document.querySelector('.botao-sair');
 let listaDeAtt = [];
 let tipoUsuario;
 
+// Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
     // Variáveis iniciais
     let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         } else if(usuarioLogado.tipoUsuario === 2 || !usuarioLogado) {
             // Condições para o usuário espectador
-            mensagemNovaAttInput.placeholder = "Você não tem permissão";
+            mensagemNovaAttInput.placeholder = "Você não tem permissão!";
             mensagemNovaAttInput.disabled = "true";
             tipoUsuario = "Espectador"
 
@@ -65,7 +66,7 @@ async function carregarPostagens() {
                 <div class="post-header">
                     <div class="post-header-text">
                         <h3>${postagens[index].nomeUsuario}
-                            <span class="header-icon-section">
+                            <span onclick="irParaPerfil('${postagens[index].usuario}');" class="header-icon-section">
                                 @${postagens[index].usuario}
                             </span>
                         </h3>
@@ -275,3 +276,7 @@ document.querySelector('.container-perfil').addEventListener('click', () => {
         window.location.href = `/perfil/${perfilDo}`;
     }
 })
+
+function irParaPerfil(usuario) {
+    window.location.href = `/perfil/${usuario}`;
+}
