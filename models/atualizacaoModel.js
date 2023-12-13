@@ -55,7 +55,8 @@ async function carregarPostagens() {
       postagem = {
         nomeUsuario: usuarioDaPostagem[0].nome,
         usuario: usuarioDaPostagem[0].usuario,
-        mensagemnovaatt: todasPostagens[index].mensagemnovaatt
+        mensagemnovaatt: todasPostagens[index].mensagemnovaatt,
+        idUsuario: todasPostagens[index].id_usuario
       };
 
       postagensFormatadas.push(postagem);

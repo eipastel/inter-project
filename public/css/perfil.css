@@ -203,6 +203,12 @@ main::-webkit-scrollbar {
   flex-direction: column;
 }
 
+.post-profile-image img {
+  border-radius: 50%;
+  height: 45px;
+  background-color: #fff;
+}
+
 .post {
   display: flex;
   align-items: flex-start;

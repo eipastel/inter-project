@@ -95,7 +95,7 @@ async function carregarPostagens() {
         console.error('Detalhes do erro:', error.message, error.response);
         console.error('Tipo do erro:', error.constructor.name);
     }
-}
+};
 
 async function postar(evento) {
     evento.preventDefault();
@@ -192,8 +192,7 @@ async function postar(evento) {
         // Se for um usuário do tipo Espectador
         alert(`Como ${tipoUsuario} você não tem permissão para postar!`);
     }
-
-}
+};
 
 // Funções utilitárias
 function dataAtual() {
@@ -207,16 +206,16 @@ function dataAtual() {
     let dataAtual = `${dia}-${mes}-${ano}@${horas}:${minutos}:${segundos}`;
 
     return dataAtual;
-}  
+};
 
 function irParaLogin() {
     window.location.href = "/login";
-}
+};
 
 function sairDaConta() {
     localStorage.removeItem('jwtToken');
     location.reload()
-}
+};
 
 async function descobrirUsuarioLogado() {
     try {
@@ -265,7 +264,7 @@ async function descobrirUsuarioLogado() {
         console.error('Erro ao realizar a requisição:', error);
         return null;
     }
-}
+};
 
 document.querySelector('.container-perfil').addEventListener('click', () => {
     let perfilDo = prompt("O perfil de qual usuário você gostaria de acessar?");
@@ -275,8 +274,8 @@ document.querySelector('.container-perfil').addEventListener('click', () => {
         // Redireciona para a página de login com o nome do usuário como parte da URL
         window.location.href = `/perfil/${perfilDo}`;
     }
-})
+});
 
 function irParaPerfil(usuario) {
     window.location.href = `/perfil/${usuario}`;
-}
+};
