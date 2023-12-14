@@ -10,7 +10,7 @@ html {
 }
 
 :root {
-  --azul-clarinho: #1D9BF0;
+  --azul-clarinho: #BE3144;
   --quase-branco: #e6ecf0;
 }
 
@@ -19,7 +19,7 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: #000;
+  background-color: #22092C;
   color: #fff;
   margin: 0 auto;
   padding: 0 2rem;
@@ -93,7 +93,7 @@ body {
 }
 
 .botao-login:hover, .botao-sair:hover, .reserva:hover{
-  background-color: #1A8CD8;
+  background-color: #872341;
 }
 
 .cadastro-e-login a.cadastre-se {
@@ -195,6 +195,27 @@ main::-webkit-scrollbar {
   padding: 15px;
   height: 50px;
   border-bottom: 1px solid #ffffff42;
+}
+
+/* Seção lateral */
+aside {
+  flex: 0.3;
+}
+
+
+.container-aside {
+  margin-top: 15px;
+  margin-left: 20px;
+  padding: 20px;
+  background-color: #30303049;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.container-aside h2 {
+  font-size: 18px;
+  font-weight: 800;
 }
 
 /* Estilização dos posts do usuário */

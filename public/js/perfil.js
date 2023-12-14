@@ -117,7 +117,6 @@ document.querySelector('.container-perfil').addEventListener('click', () => {
     }
 });
 
-
 // Função para carregar postagens
 async function carregarPostagensUnicas(perfilDoUsuario) {
     try {

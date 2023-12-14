@@ -163,7 +163,7 @@ async function postar(evento) {
             <div class="post-header">
                 <div class="post-header-text">
                     <h3>${usuarioLogado.nome}
-                        <span class="header-icon-section">
+                        <span onclick="irParaPerfil('${usuarioLogado.usuario}');" class="header-icon-section">
                             @${usuarioLogado.usuario}
                         </span>
                     </h3>
