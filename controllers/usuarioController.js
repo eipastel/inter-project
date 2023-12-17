@@ -8,8 +8,8 @@ async function criarTabelas(req, res, next) {
 // Função para cadastrar novo usuário
 async function cadastrarUsuario(req, res, next) {
   try {
-    const { nome, usuario, email, senha } = req.body;
-    const resultadoCadastro = await usuarioModel.cadastrarUsuario({ nome, usuario, email, senha });
+    const { nome, usuario, email, senha, criadoEm } = req.body;
+    const resultadoCadastro = await usuarioModel.cadastrarUsuario({ nome, usuario, email, senha, criadoEm });
 
     if (resultadoCadastro.error) {
       return res.status(409).json({ error: resultadoCadastro.error });
@@ -54,7 +54,6 @@ async function descobrirUsuarioLogado(req, res) {
     const usuarioLogado = await usuarioModel.descobrirUsuarioLogado(token);
 
     if (!usuarioLogado || !usuarioLogado.nome) {
-      return res.status(401).json({ error: "Usuário não autenticado" });
     }
 
     // Retornar a informação

@@ -38,9 +38,23 @@ async function carregarPostagens(req, res) {
     }
 }
 
+// Controller para excluir postagem
+async function excluirPostagem(req, res) {
+    try {
+        const { idPostagem } = req.params;
+
+        const respostaExclusao = await atualizacaoModel.excluirPostagem(idPostagem);
+
+        res.json({ respostaExclusao });
+    } catch(error) {
+        console.error("Erro interno do servidor:", error)
+    }
+}
+
 module.exports = {
     // Funções exportadas:
     postar,
     carregarPostagens,
+    excluirPostagem,
 
 };

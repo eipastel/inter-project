@@ -18,8 +18,9 @@ async function criarTabelas() {
           data_de_nascimento VARCHAR(10),
           usuario VARCHAR(50),
           email VARCHAR(255),
+          criadoEm VARCHAR(30),
           senha VARCHAR(255),
-          id_tipo_usuario INT DEFAULT 2
+          id_tipo_usuario INT DEFAULT 3
         );
       `;
     } catch (error) {
@@ -28,14 +29,14 @@ async function criarTabelas() {
 }
 
 // Função para cadastrar novo usuário
-async function cadastrarUsuario({ nome, usuario, email, senha }) {
+async function cadastrarUsuario({ nome, usuario, email, senha, criadoEm }) {
   try {
     // Verifica se usuário ou email já existem
     const resultadoConsulta = await db`
       SELECT * FROM usuarios WHERE usuario = ${usuario} OR email = ${email}
     `;
 
-    if (resultadoConsulta.length) {
+    if(resultadoConsulta.length) {
       return { error: 'USER_ALREADY_EXISTS' };
     }
 
@@ -45,8 +46,8 @@ async function cadastrarUsuario({ nome, usuario, email, senha }) {
 
     // Insere novo usuário no banco de dados
     await db`
-      INSERT INTO usuarios (nome, usuario, email, senha, token)
-      VALUES (${nome}, ${usuario}, ${email}, ${senhaCriptografada}, ${token})
+      INSERT INTO usuarios (nome, usuario, email, criadoEm, senha, token)
+      VALUES (${nome}, ${usuario}, ${email}, ${criadoEm}, ${senhaCriptografada}, ${token})
     `;
 
     return { message: 'Usuário cadastrado com sucesso!', token };

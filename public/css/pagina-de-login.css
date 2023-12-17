@@ -1,138 +1,175 @@
+/* Importações */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap');
+
+/* Variáveis de cor */
+:root {
+    --azul: #718BED;
+    --branco: #FAFAFA;
+    --preto: #000;
+    --cinza: #3a3c3f;
+    --cinza-de-fundo: #5C6571;
+    --azul-de-fundo: #8c9ddd;
+}
+
 /* Reset inicial */
 html {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sora', sans-serif;
 }
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-:root {
-  --azul-clarinho: #1D9BF0;
-  --quase-branco: #e6ecf0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: var(--cinza);
 }
 
 body {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  background-color: #000;
-  color: #fff;
-  margin: 0 auto;
-  padding: 0 2rem;
-  max-width: 1500px;
+    background-color: var(--cinza-de-fundo);
 }
 
 .container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: space-around;
+  background-color: var(--branco);
+  width: 450px;
+  height: 480px;
+  margin: auto;
+  border-radius: 18px;
+  padding: 1rem;
 }
 
-.container h1 {
-  font-size: 3rem;
-  margin-bottom: 5px;
+.textos-cabecalho {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.textos-cabecalho a {
+  font-size: 1.3rem;
+  color: var(--azul);
+  font-weight: bolder;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.textos-cabecalho a:hover {
+  text-decoration: underline;
+}
+
+.textos-cabecalho h2:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.textos-cabecalho h1 {
+  font-weight: 400;
+  margin-top: .9rem;
+}
+
+.inputs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
 }
 
 .input-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.input-container {
-  max-width: 700px;
-}
-
-.input {
-  margin: 10px;
-  width: 100%;
-  height: 50px;
+.input-container .input {
+  border: 1px solid rgba(128, 128, 128, 0.336);
   outline: none;
-  border: 1px solid #b8b8b888;
-  font-size: 1.4rem;
-  background: none;
-  color: white;
-  border-radius: 35px;
-  padding: 1.7rem;
-}
-
-.login-button {
-  width: 100%;
   height: 50px;
-  background-color: var(--azul-clarinho);
-  border: none;
-  padding: 3px;
-  text-align: center;
-  font-size: 1.4rem;
-  color: white;
-  font-weight: bold;
-  border-radius: 35px;
-  cursor: pointer;
-  margin-top: .8rem;
+  padding: 1rem;
+  font-size: 1.1rem;
+  background-color: rgba(230, 230, 230, 0.514);
+  width: 350px;
+  margin-top: 5px;
 }
 
-.login-button:hover {
-  background-color: #1A8CD8;
+.obrigatorio {
+  color: red;
+}
+
+.extras-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.extras-container button {
+  background-color: var(--azul);
+  outline: none;
+  border: none;
+  color: var(--branco);
+  font-weight: 500;
+  width: 150px;
+  height: 45px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: all .3s;
+}
+
+.extras-container button:hover {
+  background-color: #556dc4;
+  transform: scale(1.1);
+}
+
+.extras-container a {
+  margin-top: .8rem;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.extras-container a:hover {
+  text-decoration: underline;
 }
 
 .links-container {
-  margin-top: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--branco);
+  border-radius: 18px;
+  padding: 1rem;
+  width: 450px;
+  height: 80px;
+  margin: auto;
 }
 
 .links-container a {
+  margin-left: .4rem;
   text-decoration: none;
-  font-size: 1.2rem;
-  color: var(--azul-clarinho);
+  color: var(--azul);
+  font-weight: 600;
 }
 
 .links-container a:hover {
   text-decoration: underline;
-  color: #1A8CD8;
 }
 
-/* Adições/remoções dinâmicas */
-.erro-ao-registrar {
-  border: 1px solid rgb(255, 53, 53);
+.mensagem-de-erro, .mensagem-de-sucesso{
+  font-size: 1rem;
+  display: none;
 }
 
 .mensagem-de-erro {
-  display: none;
-  font-weight: 400;
-  margin: 0;
-  padding: 0;
-  font-size: 1rem;
-  text-align: left;
-  color: rgb(255, 53, 53);
+  color: rgb(226, 96, 96);
 }
 
 .mensagem-de-sucesso {
-  display: none;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  color: rgb(119, 197, 119);
-}
-
-/* Responsivo */
-@media (max-width: 700px) {
-
-  .container h1 {
-    font-size: 0;
-    color: white;
-  }
-
-  .input-container input {
-    height: 30px;
-  }
-
-  .container h1::after {
-    content: "Faça o Login!";
-    font-size: 2.5rem;
-  }
+  color: var(--azul-de-fundo);
 }

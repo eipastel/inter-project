@@ -1,63 +1,50 @@
-# Inter Project - Documentação (Versão 1.1)
+# Inter Project - Documentação (Versão 2.0)
 
-Bem-vindo ao Inter Project, uma plataforma de compartilhamento de atualizações e interação entre usuários. Este guia oferece informações detalhadas sobre o sistema e destaca as funcionalidades mais recentes implementadas.
+Bem-vindo ao Inter Project, uma plataforma de conexão interpessoal, criada como uma intranet para facilitar a interação entre usuários. Desenvolvido por Thiago Diogo, uma pessoa que abraçou o desafio de construir um projeto complexo do início ao fim, aprendendo constantemente ao longo do caminho. O Inter Project é um testemunho do esforço singular para criar uma plataforma completa, com integrações e validações essenciais.
 
-## Acesso à Aplicação
+## Visão Geral do Projeto:
 
-Acesse a plataforma: [Inter Project](https://inter-project-d39u.onrender.com/)
+O Inter Project é uma intranet para conexões interpessoais, oferecendo uma experiência única para usuários interagirem. Eu, como um desenvolvedor solitário, estou enfrentando o desafio de criar um projeto robusto, abrangendo tanto o back-end quanto o front-end, utilizando o modelo MVC. O projeto destaca-se pela sua complexidade, segurança e integração de funcionalidades indispensáveis.
 
-## Tecnologias Utilizadas
+## Estrutura do Projeto:
+
+- **Pastas:**
+  - `config/dbconfig.js`: Contém a configuração para a conexão com o banco de dados.
+  - `controllers`: Manipulações de requisições HTTP, incluindo atualizações, comentários, perfil e usuários.
+  - `models`: Interação com o banco de dados e regras de negócio para atualizações, comentários, perfil e usuários.
+  - `views`: Arquivos HTML para renderização das páginas, incluindo a página inicial, de login, de registro e perfil.
+  - `public`: Armazena arquivos estáticos, como CSS, imagens e arquivos JavaScript do front-end.
+  - `routes`: Manipulação de todas as rotas definidas pelo front-end e back-end.
+  - `app.js`: Arquivo principal que inicia o servidor e executa as funcionalidades mencionadas acima.
+
+## Tecnologias Utilizadas:
 
 - Node.js
 - Express.js
 - PostgreSQL
 - Bcrypt
 - JWT (JSON Web Token)
-- HTML, CSS, JavaScript (Tema escuro, inspirado no novo Twitter "X")
+- HTML, CSS, JavaScript
 
-## Estrutura do Projeto
+## Funcionalidades Principais:
 
-A estrutura do projeto segue o modelo MVC (Model-View-Controller) para proporcionar organização e escalabilidade. Vamos aprimorar a explicação:
+- **Criação de Conta:**
+  - Permite aos usuários criar uma conta com criptografia de senha para garantir a segurança das informações.
 
-- **config:** Armazena configurações, como as do banco de dados.
-- **controllers:** Contém controladores que manipulam as requisições HTTP.
-- **models:** Apresenta modelos para interação com o banco de dados.
-- **public:** Contém arquivos estáticos, incluindo o tema escuro responsivo.
-- **routes:** Define rotas da aplicação.
-- **views:** Armazena arquivos HTML para a renderização das páginas.
+- **Login Seguro:**
+  - Implementa um sistema de login com validação da senha criptografada e uso de tokens JWT para autenticação.
 
-## Atualizações da Versão 1.1
+- **Feed Interativo:**
+  - Apresenta um feed dinâmico com posts exibidos em formato de cards para facilitar a navegação.
 
-### Controle de Acesso
+- **Criação de Novos Posts:**
+  - Oferece a funcionalidade de criar novos posts, abrindo um modal elegante e amigável.
 
-Implementamos um sistema robusto de controle de acesso, permitindo diferentes níveis de permissão:
+- **Comentários em Posts:**
+  - Permite postar e visualizar comentários em posts existentes, exibindo a mensagem e o nome da pessoa que fez o comentário.
 
-- **Espectador:** Pode visualizar, mas não interagir diretamente.
-- **Administrador:** Possui controle total sobre o sistema.
-- **Verificado:** Pode deixar sua marca com novas atualizações.
-
-### Perfil do Usuário
-
-Para aumentar as interações, criamos um perfil com:
-
-- Detalhes adicionais, como nome, cidade/estado.
-
-## Novas Funcionalidades Planejadas
-
-- **Notícia Destaque:**
-   - Destaque para notícias importantes da semana.
-
-- **Comunidade Unida:**
-   - Seção dedicada para visualização de todos os membros cadastrados.
-
-- **Imagens nas Postagens:**
-   - Capacidade de adicionar imagens às atualizações.
-
-- **Comentários e Curtidas:**
-   - Introdução de funcionalidades de comentários e curtidas nas postagens.
-     
- - **Perfil:**
-   - Visualização de todas as postagens feitas pelo usuário.
+- **Logout Simples:**
+  - Inclui um botão de logout para que os usuários possam sair da conta e serem redirecionados para a página de login.
 
 ## Explore e Contribua
 

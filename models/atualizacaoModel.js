@@ -1,4 +1,5 @@
 const db = require('../config/dbConfig.js');
+const comentarioController = require('../models/comentarioModel.js');
 
 async function criarTabelas() {
   try {
@@ -8,11 +9,12 @@ async function criarTabelas() {
         id_usuario INT,
         mensagemNovaAtt VARCHAR(325),
         curtidas INT,
+        comentarios VARCHAR(125),
         criadoEm VARCHAR(30),
         removidoEm VARCHAR(30),
+        disponivel BOOLEAN NOT NULL DEFAULT true,
         editadoEm VARCHAR(30)
-        );
-    `;
+        );`;
   } catch (error) {
     console.error('Erro ao criar tabela de atualizações: ', error.message);
   }
@@ -45,17 +47,22 @@ async function carregarPostagens() {
     if (!todasPostagens || todasPostagens.length === 0) {
       // Tratando se não encontrar nenhuma publicação
       return null;
-  }
+    }
 
     for(let index = 0; index < todasPostagens.length; index++) {
       let usuarioDaPostagem = await db`
       SELECT * FROM usuarios WHERE id = ${todasPostagens[index].id_usuario};
       `
+      
+      let todosOsComentariosDaPostagem = await comentarioController.comentariosDaPostagem(todasPostagens[index].id);
 
       postagem = {
+        id: todasPostagens[index].id,
         nomeUsuario: usuarioDaPostagem[0].nome,
         usuario: usuarioDaPostagem[0].usuario,
+        comentarios: todosOsComentariosDaPostagem,
         mensagemnovaatt: todasPostagens[index].mensagemnovaatt,
+        criadoem: todasPostagens[index].criadoem,
         idUsuario: todasPostagens[index].id_usuario
       };
 
@@ -64,7 +71,21 @@ async function carregarPostagens() {
 
     return postagensFormatadas
     } catch (error) { 
-      throw error
+      throw error;
+  }
+}
+
+async function excluirPostagem(idPostagem) {
+  try {
+
+    let statusRemocao = await db`
+      DELETE FROM atualizacoes
+      WHERE id = ${idPostagem};
+    `;
+
+    return statusRemocao
+  } catch(error) {
+    throw error;
   }
 }
 
@@ -73,5 +94,6 @@ module.exports = {
     criarTabelas,
     postar,
     carregarPostagens,
+    excluirPostagem,
 
 };

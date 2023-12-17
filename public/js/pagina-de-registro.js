@@ -1,5 +1,16 @@
+// Assim que a página carrega, verifica se o usuário está logado
+document.addEventListener("DOMContentLoaded", async function() {
+    const usuarioLogado = await descobrirUsuarioLogado();
+
+    // Caso o usuário esteja logado, mandando ele para a página principal
+    if(usuarioLogado) {
+        window.location.href = "/";
+        return;
+    }
+});
+
 // Escutando o botão para quando o usuário der o submit
-document.querySelector('.register-button').addEventListener('click', (evento) => {
+document.querySelector('.botao-de-registro').addEventListener('click', (evento) => {
     // Prevenindo o e-mail automático do formulário
     evento.preventDefault();
 
@@ -12,6 +23,7 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
     let mensagemDeErro = document.querySelector('.mensagem-de-erro');
     let mensagemDeSucesso = document.querySelector('.mensagem-de-sucesso');
     let modal = document.getElementById('meu-modal');
+    let criadoEm;
 
     // Valores dos campos
     let nome = nomeInput.value;
@@ -77,6 +89,8 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
         mensagemDeErro.style.display = "none";
         mensagemDeSucesso.style.display = "block";
 
+        criadoEm = dataAtual();
+
         try {
             // Enviando o usuário para o backend
             fetch('https://inter-project-d39u.onrender.com/registrar', {
@@ -88,7 +102,8 @@ document.querySelector('.register-button').addEventListener('click', (evento) =>
                     nome: nome,
                     usuario: usuario,
                     email: email,
-                    senha: senha
+                    senha: senha,
+                    criadoEm: criadoEm,
                 }),
                 })
                 .then(response => response.json())
@@ -131,3 +146,64 @@ function temEspacos(string) {
 function fecharModal() {
     document.getElementById('meu-modal').style.display = 'none';
 }
+
+function dataAtual() {
+    let hoje = new Date();
+    let dia = hoje.getDate().toString().padStart(2, '0');
+    let mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    let ano = hoje.getFullYear();
+    let horas = hoje.getHours().toString().padStart(2, '0');
+    let minutos = hoje.getMinutes().toString().padStart(2, '0');
+    let segundos = hoje.getSeconds().toString().padStart(2, '0');
+    let dataAtual = `${dia}-${mes}-${ano}@${horas}:${minutos}:${segundos}`;
+
+    return dataAtual;
+};
+
+// Função para descobrir qual o usuário logado
+async function descobrirUsuarioLogado() {
+    try {
+        // Obtenha o token da localStorage
+        let tokenUsuarioLogado = localStorage.getItem('jwtToken');
+
+        // Verifique se o token existe
+        if (!tokenUsuarioLogado) {
+            return null;
+        }
+
+        // Faça a requisição para o backend com o token no cabeçalho
+        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': tokenUsuarioLogado,
+            },
+        });
+
+        // Verifique se a resposta é bem-sucedida (status 200)
+        if (!response.ok) {
+            return null;
+        }
+
+        // Parse da resposta JSON
+        const informacao = await response.json();
+
+        // Verifique se há um erro na resposta
+        if (informacao.error) {
+            return null;
+        } else {
+            // Defina quem é o usuário logado
+            let usuarioLogado = {
+                nome: informacao.nome,
+                email: informacao.email,
+                usuario: informacao.usuario,
+                id: informacao.id,
+                tipoUsuario: informacao.tipoUsuario
+            };
+            return usuarioLogado;
+        }
+    } catch (error) {
+        console.error('Erro ao realizar a requisição:', error);
+        return null;
+    }
+};

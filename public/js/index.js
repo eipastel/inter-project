@@ -1,31 +1,17 @@
 // Variáveis iniciais
-let botaoPostar = document.getElementById('botao-postar');
-let botaoTelasMenores = document.getElementById('botao-telas-menores');
-let cadastroELogin = document.querySelector('.cadastro-e-login');
-let botaoSair = document.querySelector('.botao-sair');
 let listaDeAtt = [];
 let tipoUsuario;
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
-    // Variáveis iniciais
-    let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
-
-    // Adicionando dois ouvintes de evento para os 2 botões de postar
-    botaoPostar.addEventListener("click", function(evento) {
-        postar(evento);
-    });
-
-    botaoTelasMenores.addEventListener("click", function(evento) {
-        postar(evento);
-    });
-
     const usuarioLogado = await descobrirUsuarioLogado();
     carregarPostagens();
 
+    // Caso o usuário esteja logado, trocando as informações.
     if(usuarioLogado) {
-        cadastroELogin.remove();
-        botaoSair.style.display = 'block';
+        // Trocando as informações necessárias do usuário logado
+        let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
+        nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${usuarioLogado.nome}</h5>`
 
         if(usuarioLogado.tipoUsuario === 1) {
             // Condições para o usuário administrador
@@ -33,8 +19,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         } else if(usuarioLogado.tipoUsuario === 2 || !usuarioLogado) {
             // Condições para o usuário espectador
-            mensagemNovaAttInput.placeholder = "Você não tem permissão!";
-            mensagemNovaAttInput.disabled = "true";
             tipoUsuario = "Espectador"
 
         } else if(usuarioLogado.tipoUsuario === 3) {
@@ -42,7 +26,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             tipoUsuario = "Verificado"
         }
     } else {
-    
+        window.location.href = "/login";
+        return;
     }
 });
 
@@ -50,41 +35,101 @@ document.addEventListener("DOMContentLoaded", async function() {
 async function carregarPostagens() {
     try {
         const response = await fetch('https://inter-project-d39u.onrender.com/postagens');
+        const usuarioLogado = await descobrirUsuarioLogado();
         const data = await response.json();
         const postagens = data.postagensFormatadas;
-        const todasAtualizacoes = document.querySelector('.atualizacoes');
+        const todasAtualizacoes = document.querySelector('.container-atualizacoes');
+        let containerAtualizacoes = document.querySelector('.container-atualizacoes');
+        let cabecalhoDaAtualizacao, conteudoAtualizacao, acoesExtras, infoAcoesExtras, containerComentarios, containerComentar, comentarios;
+        containerAtualizacoes.innerHTML = ''
 
         for(let index = 0; index < postagens.length; index++) {
+            comentarios = ``
+            let comentariosDoPost = postagens[index].comentarios
+            if(comentariosDoPost.length) {
+                // Para cada comentário, adiciona-lo na div container-comentario
+                for(let index = 0; index < comentariosDoPost.length; index++) {
+                    comentarios += `
+                        <div class="comentario">
+                            <h3>${comentariosDoPost[index].nomeUsuario}</h3>
+                            <p>${comentariosDoPost[index].comentario}</p>
+                        </div>
+                    `;
+                }
+            } else {
+                containerComentarios = ``;
+            }
+
+            containerComentarios = `
+            <div class="container-comentarios"> 
+                ${comentarios}
+            </div>`
+
+            cabecalhoDaAtualizacao = `
+                <div class="cabecalho-da-atualizacao">
+                    <div class="imagem-cabecalho">
+                        <img src="/img/foto-exemplo-perfil.jpg" alt="Foto usuário da postagem">
+                    </div>
+                    <div class="textos-cabecalho">
+                        <h2 onclick="irParaPerfil('${postagens[index].usuario}');">${postagens[index].nomeUsuario}</h2>
+                        <p>${dataFormatada(postagens[index].criadoem)}</p>
+                    </div>
+                </div>`;
+
+            // Se tiver imagem!!
+            // conteudoAtualizacao = `
+            //     <div class="conteudo-atualizacao">
+            //         <p class="textos-atualizacao">${postagens[index].mensagemnovaatt}</p>
+            //         <img src="/img/teste.png" alt="Imagem do post do usuário">
+            //     </div>`;
+
+            conteudoAtualizacao = `
+                <div class="conteudo-atualizacao">
+                    <p class="textos-atualizacao">${postagens[index].mensagemnovaatt}</p>
+                </div>`;
+
+            acoesExtras = `
+                <div class="acoes-extras">
+                    <div class="acao-curtir">
+                        <i class="fa-regular fa-heart"></i>
+                        <p>Curtir</p>
+                    </div>
+                    <div onclick="focarComentario(${postagens[index].id});" class="acao-comentar">
+                        <i class="fa-regular fa-comment"></i>
+                        <p>Comentar</p>
+                    </div>
+                </div>`;
+            
+            infoAcoesExtras = `
+                <div class="info-acoes-extras">
+                    <p class="info-curtidas">0 Curtidas</p>
+                    <p class="info-comentarios">${comentariosDoPost.length} Comentários</p>
+                </div>`;
+
+            containerComentar = `
+                <div class="container-comentar">
+                    <img src="/img/foto-exemplo-perfil.jpg" width="48px" alt="Foto usuário da postagem">
+                    <input maxlength="60" type="text" class="comentario-input-postagem-${postagens[index].id}" name="comentario" id="comentario" placeholder="Adicione o seu comentário...">
+                    <button id="botao-postar-comentario" onclick="comentarPostagem(${usuarioLogado.id}, ${postagens[index].id});">Comentar</button>
+                </div>`;
+
             const novaDiv = document.createElement("div");
             novaDiv.innerHTML = `
-            <div class="post">
-            <div class="post-profile-image">
-                <img src="/img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
-            </div>
-        
-            <div class="post-body">
-                <div class="post-header">
-                    <div class="post-header-text">
-                        <h3>${postagens[index].nomeUsuario}
-                            <span onclick="irParaPerfil('${postagens[index].usuario}');" class="header-icon-section">
-                                @${postagens[index].usuario}
-                            </span>
-                        </h3>
+                <div class="container-da-atualizacao postagem-${postagens[index].id}">
+                    ${cabecalhoDaAtualizacao}
+
+                    ${conteudoAtualizacao}
+
+                    <div class="container-extras">
+                        ${acoesExtras}
+
+                        ${infoAcoesExtras}
+
+                        ${containerComentarios}
                     </div>
-        
-                    <div class="post-header-discription">
-                        <p>${postagens[index].mensagemnovaatt}</p>
-                    </div>
-                    
+
+                    ${containerComentar}
                 </div>
-        
-                <div class="post-footer">
-                    <i class="fa-regular fa-comment"></i>
-                    <i class="fa-regular fa-heart"></i>
-                </div>
-        
-            </div>
-        </div>
             `;
 
             // Adiciona a nova postagem ao início da lista
@@ -92,33 +137,26 @@ async function carregarPostagens() {
         }
     } catch (error) {
         console.error('Erro ao carregar postagens:', error);
-        console.error('Detalhes do erro:', error.message, error.response);
-        console.error('Tipo do erro:', error.constructor.name);
     }
 };
 
-async function postar(evento) {
-    evento.preventDefault();
-    evento.stopPropagation();
-
-    // Se for um usuário Verificado ou Administrador
+async function postar() {
+    // Se for um usuário Verificado ou Administrador a atualização será postada
     if(tipoUsuario === "Verificado" || tipoUsuario === "Administrador") {
-        // Variáveis padrões
-        let mensagemNovaAttInput = document.getElementById('mensagem-nova-att');
+        // Variáveis iniciais
+        let mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
         let mensagemNovaAtt = mensagemNovaAttInput.value;
 
-        if(!mensagemNovaAtt) {
-            console.error("Preencha o campo para fazer uma postagem!")
+        if(!mensagemNovaAtt || mensagemNovaAtt.trim() == "") {
+            alert("Preencha o campo para fazer uma postagem!")
             return;
         }
 
         // Limpando o campo da atualização
         mensagemNovaAttInput.value = "";
 
-        // Definindo qual o usuário logado
+        // Double check do usuário logado
         const usuarioLogado = await descobrirUsuarioLogado();
-
-        // Verificando se o usuário foi obtido corretamente
         if (!usuarioLogado) {
             console.log("Usuário não encontrado. A atualização não será postada.");
             return;
@@ -130,6 +168,9 @@ async function postar(evento) {
             idUsuario: usuarioLogado.id,
             criadoEm: dataAtual()
         }
+
+        // Fechando o modal no momento que o post é feito.
+        fecharModalPost();
 
         // Enviando a postagem para o backend
         fetch('https://inter-project-d39u.onrender.com/postar', {
@@ -145,52 +186,15 @@ async function postar(evento) {
         }),
         })
         .then(response => response.json())
-        // Caso haja algum erro não identificado do servidor ou outro.
         .catch((error) => {
+            // Caso haja algum erro não identificado do servidor ou outro.
             console.error('Erro não identificado:', error);
         });
-
-        // Mostrando a postagem na tela
-        let todasAtualizacoes = document.querySelector('.atualizacoes');
-        let novaDiv = document.createElement("div");
-        novaDiv.innerHTML = `
-        <div class="post">
-        <div class="post-profile-image">
-            <img src="./img/foto-padrao-perfil.png" alt="Imagem Perfil do Usuário">
-        </div>
-
-        <div class="post-body">
-            <div class="post-header">
-                <div class="post-header-text">
-                    <h3>${usuarioLogado.nome}
-                        <span onclick="irParaPerfil('${usuarioLogado.usuario}');" class="header-icon-section">
-                            @${usuarioLogado.usuario}
-                        </span>
-                    </h3>
-                </div>
-
-                <div class="post-header-discription">
-                    <p>${novaAtt.mensagemNovaAtualizacao}</p>
-                </div>
-                
-            </div>
-
-            <div class="post-footer">
-                <i class="fa-regular fa-comment"></i>
-                <i class="fa-regular fa-heart"></i>
-            </div>
-
-        </div>
-        </div>
-            `
-        if (todasAtualizacoes.firstChild) {
-            todasAtualizacoes.insertBefore(novaDiv, todasAtualizacoes.firstChild);
-        } else {
-            todasAtualizacoes.appendChild(novaDiv);
-        }
+        // Atualizando as postagens na tela
+        carregarPostagens();
     } else {
         // Se for um usuário do tipo Espectador
-        alert(`Como ${tipoUsuario} você não tem permissão para postar!`);
+        alert(`Como ${tipoUsuario = "usuário não logado"} você não tem permissão para postar!`);
     }
 };
 
@@ -214,9 +218,10 @@ function irParaLogin() {
 
 function sairDaConta() {
     localStorage.removeItem('jwtToken');
-    location.reload()
+    irParaLogin();
 };
 
+// Função para descobrir qual o usuário logado
 async function descobrirUsuarioLogado() {
     try {
         // Obtenha o token da localStorage
@@ -238,7 +243,6 @@ async function descobrirUsuarioLogado() {
 
         // Verifique se a resposta é bem-sucedida (status 200)
         if (!response.ok) {
-            console.log("Erro na requisição:", response.status);
             return null;
         }
 
@@ -247,7 +251,6 @@ async function descobrirUsuarioLogado() {
 
         // Verifique se há um erro na resposta
         if (informacao.error) {
-            console.log("Erro não identificado: ", informacao.error);
             return null;
         } else {
             // Defina quem é o usuário logado
@@ -266,16 +269,137 @@ async function descobrirUsuarioLogado() {
     }
 };
 
-document.querySelector('.container-perfil').addEventListener('click', () => {
-    let perfilDo = prompt("O perfil de qual usuário você gostaria de acessar?");
-
-    // Verifica se o usuário inseriu algo
-    if (perfilDo) {
-        // Redireciona para a página de login com o nome do usuário como parte da URL
-        window.location.href = `/perfil/${perfilDo}`;
-    }
-});
-
+// Função para redirecionar para perfil específico
 function irParaPerfil(usuario) {
     window.location.href = `/perfil/${usuario}`;
 };
+
+// Função para excluir uma atualização
+async function excluirPostagem(idPostagem) {
+    let temCerteza = confirm("Tem certeza que deseja excluir essa atualização?");
+    if(temCerteza) {
+        try {
+            // Faça a solicitação para o backend para excluir a postagem
+            const response = await fetch(`https://inter-project-d39u.onrender.com/excluirPostagem/${idPostagem}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+            });
+    
+            // Verifique se a resposta foi bem-sucedida (status 200)
+            if (response.ok) {
+                // Remova a postagem da DOM
+                const postagemRemovida = document.querySelector(`.postagem-${idPostagem}`);
+                if (postagemRemovida) {
+                    postagemRemovida.remove();
+                } else {
+                    console.warn('Postagem não encontrada na DOM.');
+                }
+            } else {
+                console.error('Erro ao excluir postagem:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao realizar a requisição para excluir postagem:', error);
+        }
+    } else {
+        alert("Operação de exclusão cancelada!")
+    }
+}
+
+// Função para curtir ou descutir postagem
+function curtirPublicacao(idUsuario, idPostagem) {
+
+    alert("Por enquanto não é possível curtir a publicação!")
+
+}
+
+// Função para curtir ou descutir postagem
+async function comentarPostagem(idUsuario, idPostagem) {
+    try {
+        let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
+        let comentario = inputComentario.value
+
+        if(!comentario || comentario.trim() === "") {
+            alert("Preencha o campo de comentário para comentar!");
+            return;
+        } else {
+            // Enviando o comentário para o backend
+            fetch('https://inter-project-d39u.onrender.com/comentarPostagem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+                body: JSON.stringify({
+                    idUsuario: idUsuario,
+                    idPostagem: idPostagem,
+                    comentario: comentario,
+                }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.error) {
+                    // Tratando caso haja um erro
+
+                } else {
+                    // Sucesso ao comentar (limpando o campo e atualizando as postagens na tela)
+                    inputComentario.value = '';
+                    carregarPostagens();
+                }
+                })
+                .catch((error) => {
+                    // Caso haja algum erro não identificado do servidor ou outro.
+                    console.error('Erro não identificado:', error);
+                });
+            }     
+    } catch(error) {
+        console.error("Erro não identificado: ", error)
+    }
+
+
+}
+
+// Função para editar postagem
+function editarPostagem(idPostagem) {
+
+
+
+}
+
+// Função para formatar a data do banco para o formato semântico
+function dataFormatada(data) {
+    const meses = [
+    "janeiro", "fevereiro", "março",
+    "abril", "maio", "junho",
+    "julho", "agosto", "setembro",
+    "outubro", "novembro", "dezembro"];
+
+    const [dataParte, horaParte] = data.split('@');
+    const [dia, mes, ano] = dataParte.split('-');
+    const [hora, minuto] = horaParte.split(':');
+    const dataFormatada = `${dia} de ${meses[parseInt(mes, 10) - 1]}, ${ano} - ${hora}:${minuto}`;
+    return dataFormatada;
+}
+
+// Função para abrir o modal de criar novo post
+async function abrirModalPost() {
+    if(!localStorage.getItem('jwtToken')) {
+        alert("Você não está logado!")
+        return;
+    };
+
+    const modalCriacaoPost = document.querySelector('.container-modal-para-postar');
+    modalCriacaoPost.style.display = "block"
+};
+
+function fecharModalPost() {
+    const modalCriacaoPost = document.querySelector('.container-modal-para-postar');
+    modalCriacaoPost.style.display = "none"
+}
+
+function focarComentario(idPostagem) {
+    let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
+    inputComentario.focus()
+}

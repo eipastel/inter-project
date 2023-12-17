@@ -9,4 +9,7 @@ router.post('/postar', atualizacaoController.postar);
 // Rota para mostrar postagens
 router.get('/postagens', atualizacaoController.carregarPostagens);
 
+// Rota para mostrar postagens
+router.delete('/excluirPostagem/:idPostagem', atualizacaoController.excluirPostagem);
+
 module.exports = router;

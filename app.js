@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const atualizacaoRoutes = require('./routes/atualizacaoRoutes');
 const perfilRoutes = require('./routes/perfilRoutes');
+const comentarioRoutes = require('./routes/comentarioRoutes');
 const path = require('path');
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.static('./public'));
 app.use(usuarioRoutes);
 app.use(atualizacaoRoutes);
 app.use(perfilRoutes);
+app.use(comentarioRoutes);
 
 // Middleware para tratamento de erros
 app.use((err, req, res, next) => {

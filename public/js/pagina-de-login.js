@@ -1,3 +1,14 @@
+// Assim que a página carrega,  verifica se o usuário está logado
+document.addEventListener("DOMContentLoaded", async function() {
+    const usuarioLogado = await descobrirUsuarioLogado();
+
+    // Caso o usuário esteja logado, mandando ele para a página principal
+    if(usuarioLogado) {
+        window.location.href = "/";
+        return;
+    }
+});
+
 // Escutando o botão para executar a ação do login
 document.querySelector('.login-button').addEventListener('click', (evento) => {
     // Prevenindo o efeito padrão de envio do formulário
@@ -74,3 +85,51 @@ document.querySelector('.login-button').addEventListener('click', (evento) => {
         });
     }
 });
+
+// Função para descobrir qual o usuário logado
+async function descobrirUsuarioLogado() {
+    try {
+        // Obtenha o token da localStorage
+        let tokenUsuarioLogado = localStorage.getItem('jwtToken');
+
+        // Verifique se o token existe
+        if (!tokenUsuarioLogado) {
+            return null;
+        }
+
+        // Faça a requisição para o backend com o token no cabeçalho
+        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': tokenUsuarioLogado,
+            },
+        });
+
+        // Verifique se a resposta é bem-sucedida (status 200)
+        if (!response.ok) {
+            return null;
+        }
+
+        // Parse da resposta JSON
+        const informacao = await response.json();
+
+        // Verifique se há um erro na resposta
+        if (informacao.error) {
+            return null;
+        } else {
+            // Defina quem é o usuário logado
+            let usuarioLogado = {
+                nome: informacao.nome,
+                email: informacao.email,
+                usuario: informacao.usuario,
+                id: informacao.id,
+                tipoUsuario: informacao.tipoUsuario
+            };
+            return usuarioLogado;
+        }
+    } catch (error) {
+        console.error('Erro ao realizar a requisição:', error);
+        return null;
+    }
+};
