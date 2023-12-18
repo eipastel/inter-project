@@ -1,7 +1,7 @@
 const atualizacaoModel = require('../models/atualizacaoModel');
 
-async function criarTabelas(req, res, next) {
-    await atualizacaoModel.criarTabelas();
+async function criarTabela(req, res, next) {
+    await atualizacaoModel.criarTabela();
     res.json({ message: 'Tabela de atualizações criada com sucesso.' });
 }
 
@@ -51,10 +51,39 @@ async function excluirPostagem(req, res) {
     }
 }
 
+// Controller para curtir publicação
+async function curtirPostagem(req, res) {
+    try {
+        const { idUsuario, idPostagem, curtidoEm } = req.body;
+
+        const resultadoCurtida = await atualizacaoModel.curtirPostagem({ idUsuario, idPostagem, curtidoEm });
+
+        res.json({ resultadoCurtida });
+    } catch(error) {
+        console.error("Erro interno do servidor:", error)
+    }
+}
+
+async function verificarCurtida(req, res){
+    try {
+        const { idUsuario, idPostagem } = req.params;
+
+        const usuarioCurtiu = await atualizacaoModel.verificarCurtida({ idUsuario, idPostagem });
+
+        res.json( usuarioCurtiu );
+    } catch (error) {
+        console.error('Erro ao verificar curtida:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+}
+
 module.exports = {
     // Funções exportadas:
+    criarTabela,
     postar,
     carregarPostagens,
     excluirPostagem,
+    curtirPostagem,
+    verificarCurtida,
 
 };

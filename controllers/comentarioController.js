@@ -28,8 +28,8 @@ async function comentariosDaPostagem(idPostagem) {
 
 module.exports = {
     // Funções exportadas:
-    comentarPostagem,
     criarTabela,
+    comentarPostagem,
     comentariosDaPostagem,
 
 };

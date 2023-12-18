@@ -13,6 +13,7 @@ async function criarTabela() {
   }
 }
 
+
 // Model da função para criar a postagem
 async function comentarPostagem({ idUsuario, idPostagem, comentario }) {
     try {

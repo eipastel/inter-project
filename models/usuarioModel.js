@@ -7,7 +7,7 @@ dotenv.config();
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
 
-async function criarTabelas() {
+async function criarTabela() {
     try {
       await db`
         CREATE TABLE IF NOT EXISTS usuarios (
@@ -133,7 +133,7 @@ async function descobrirUsuarioLogado(theToken) {
 module.exports = {
     // Funções exportadas:
     cadastrarUsuario,
-    criarTabelas,
+    criarTabela,
     logar,
     descobrirUsuarioLogado,
 

@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/registrar', usuarioController.cadastrarUsuario);
 
 // Rota para criar tabelas de usuários
-router.post('/criar-tabelas', usuarioController.criarTabelas);
+router.post('/criar-tabelas', usuarioController.criarTabela);
 
 // Rota para criar tabelas de usuários
 router.post('/logar', usuarioController.logar);

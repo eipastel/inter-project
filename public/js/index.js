@@ -6,7 +6,7 @@ let tipoUsuario;
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
     carregarPostagens();
-
+    
     // Caso o usuário esteja logado, trocando as informações.
     if(usuarioLogado) {
         // Trocando as informações necessárias do usuário logado
@@ -35,16 +35,29 @@ document.addEventListener("DOMContentLoaded", async function() {
 async function carregarPostagens() {
     try {
         const response = await fetch('https://inter-project-d39u.onrender.com/postagens');
-        const usuarioLogado = await descobrirUsuarioLogado();
         const data = await response.json();
         const postagens = data.postagensFormatadas;
+        const usuarioLogado = await descobrirUsuarioLogado();
         const todasAtualizacoes = document.querySelector('.container-atualizacoes');
         let containerAtualizacoes = document.querySelector('.container-atualizacoes');
-        let cabecalhoDaAtualizacao, conteudoAtualizacao, acoesExtras, infoAcoesExtras, containerComentarios, containerComentar, comentarios;
-        containerAtualizacoes.innerHTML = ''
+        let cabecalhoDaAtualizacao, conteudoAtualizacao, acoesExtras, infoAcoesExtras, containerComentarios, containerComentar, comentarios, quantidadeCurtidas, estadoCurtida;
+        containerAtualizacoes.innerHTML = '';
 
         for(let index = 0; index < postagens.length; index++) {
             comentarios = ``
+            quantidadeCurtidas = 0
+            let infoUsuarioCurtiu = await verificarCurtida(usuarioLogado.id, postagens[index].id);
+            quantidadeCurtidas = infoUsuarioCurtiu.quantidadeDeCurtidas
+
+            // Se o usuário curtiu a publicação, trocar as classes e adicionar o css
+            if(infoUsuarioCurtiu.curtido && infoUsuarioCurtiu.idUsuario == usuarioLogado.id) {
+                estadoCurtida = `fa-solid comentario-curtido`;
+                estadoTextoCurtir =`Curtido`;
+            } else {
+                estadoCurtida = `fa-regular `;
+                estadoTextoCurtir = `Curtir`;
+            }
+
             let comentariosDoPost = postagens[index].comentarios
             if(comentariosDoPost.length) {
                 // Para cada comentário, adiciona-lo na div container-comentario
@@ -87,22 +100,22 @@ async function carregarPostagens() {
                 <div class="conteudo-atualizacao">
                     <p class="textos-atualizacao">${postagens[index].mensagemnovaatt}</p>
                 </div>`;
-
+            
             acoesExtras = `
                 <div class="acoes-extras">
-                    <div class="acao-curtir">
-                        <i class="fa-regular fa-heart"></i>
-                        <p>Curtir</p>
+                    <div class="acao-curtir comentariocurtido-${postagens[index].id}" onclick="curtirPublicacao(${usuarioLogado.id}, ${postagens[index].id})";>
+                        <i id="icone-da-postagem-${postagens[index].id}" class="${estadoCurtida} fa-heart"></i>
+                        <p>${estadoTextoCurtir}</p>
                     </div>
                     <div onclick="focarComentario(${postagens[index].id});" class="acao-comentar">
-                        <i class="fa-regular fa-comment"></i>
+                        <iclass="fa-regular fa-comment"></i>
                         <p>Comentar</p>
                     </div>
                 </div>`;
             
             infoAcoesExtras = `
                 <div class="info-acoes-extras">
-                    <p class="info-curtidas">0 Curtidas</p>
+                    <p class="info-curtidas curtidas-post-${postagens[index].id}">${quantidadeCurtidas} Curtidas</p>
                     <p class="info-comentarios">${comentariosDoPost.length} Comentários</p>
                 </div>`;
 
@@ -146,6 +159,13 @@ async function postar() {
         // Variáveis iniciais
         let mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
         let mensagemNovaAtt = mensagemNovaAttInput.value;
+
+        // Bloqueando clicks por 3 segundos após postar
+        let janelaTela = document.body
+        janelaTela.style.pointerEvents = 'none';
+        setTimeout(() => {
+            janelaTela.style.pointerEvents = 'auto';
+        }, 3000);
 
         if(!mensagemNovaAtt || mensagemNovaAtt.trim() == "") {
             alert("Preencha o campo para fazer uma postagem!")
@@ -309,11 +329,45 @@ async function excluirPostagem(idPostagem) {
 }
 
 // Função para curtir ou descutir postagem
-function curtirPublicacao(idUsuario, idPostagem) {
+async function curtirPublicacao(idUsuario, idPostagem) {
+    try {
+        // Enviando a postagem para o backend
+        fetch('https://inter-project-d39u.onrender.com/curtirPostagem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('jwtToken'),
+            },
+            body: JSON.stringify({
+                idUsuario: idUsuario,
+                idPostagem: idPostagem,
+                curtidoEm: dataAtual()
+            }),
+            })
+            .then(response => response.json())
+            .catch((error) => {
+                // Caso haja algum erro não identificado do servidor ou outro.
+                throw error
+            });
 
-    alert("Por enquanto não é possível curtir a publicação!")
+            // Desativando o usuário de clicar por 3 segundos segundo
+            let divCurtir = document.querySelector(`.comentariocurtido-${idPostagem}`)
+            divCurtir.style.pointerEvents = 'none';
+            setTimeout(() => {
+                divCurtir.style.pointerEvents = 'auto';
+            }, 3000);
 
-}
+
+            let iconDaPostagem = document.getElementById(`icone-da-postagem-${idPostagem}`);
+            if(iconDaPostagem.classList.value.includes('fa-regular')) {
+                formatarCurtidas(idPostagem, 'adicionar');
+            } else {
+                formatarCurtidas(idPostagem, 'remover');
+            }
+    } catch(error) {
+        throw error
+    }
+};
 
 // Função para curtir ou descutir postagem
 async function comentarPostagem(idUsuario, idPostagem) {
@@ -357,8 +411,6 @@ async function comentarPostagem(idUsuario, idPostagem) {
     } catch(error) {
         console.error("Erro não identificado: ", error)
     }
-
-
 }
 
 // Função para editar postagem
@@ -366,6 +418,30 @@ function editarPostagem(idPostagem) {
 
 
 
+}
+
+// Função para formatar a quantidade de curtidas (adicionar 1)
+function formatarCurtidas(idPostagem, acao) {
+    let quantidadeCurtidasParagrafo = document.querySelector(`.curtidas-post-${idPostagem}`);
+    let iconDaPostagem = document.getElementById(`icone-da-postagem-${idPostagem}`);
+    let quantidadeCurtidas = quantidadeCurtidasParagrafo.textContent
+    let arrayQuantidadeCurtidas = quantidadeCurtidas.split(" ");
+    let novoValor = arrayQuantidadeCurtidas[0]
+
+    if(acao == 'remover') {
+        novoValor--
+        iconDaPostagem.classList.remove('fa-solid');
+        iconDaPostagem.classList.remove('comentario-curtido');
+        iconDaPostagem.classList.add('fa-regular');
+    } else if(acao == 'adicionar') {
+        novoValor++
+        iconDaPostagem.classList.add('fa-solid');
+        iconDaPostagem.classList.add('comentario-curtido');
+        iconDaPostagem.classList.remove('fa-regular');
+    }
+
+    arrayQuantidadeCurtidas[0] = novoValor;
+    quantidadeCurtidasParagrafo.textContent = `${arrayQuantidadeCurtidas[0]} Curtidas`
 }
 
 // Função para formatar a data do banco para o formato semântico
@@ -402,4 +478,15 @@ function fecharModalPost() {
 function focarComentario(idPostagem) {
     let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
     inputComentario.focus()
+}
+
+async function verificarCurtida(idUsuario, idPostagem) {
+    try {
+        const response = await fetch(`https://inter-project-d39u.onrender.com/verificarCurtida/${idUsuario}/${idPostagem}`);
+        const data = await response.json();
+
+        return data;
+    } catch(error) {
+        throw error;
+    }
 }

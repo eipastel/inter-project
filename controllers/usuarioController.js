@@ -1,7 +1,7 @@
 const usuarioModel = require('../models/usuarioModel.js');
 
-async function criarTabelas(req, res, next) {
-  await usuarioModel.criarTabelas();
+async function criarTabela(req, res, next) {
+  await usuarioModel.criarTabela();
   res.json({ message: 'Tabela de usuários criada com sucesso.' });
 }
 
@@ -66,8 +66,8 @@ async function descobrirUsuarioLogado(req, res) {
 
 module.exports = {
     // Funções exportadas:
+    criarTabela,
     cadastrarUsuario,
-    criarTabelas,
     logar,
     descobrirUsuarioLogado,
 
