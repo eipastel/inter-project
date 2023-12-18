@@ -331,7 +331,7 @@ async function excluirPostagem(idPostagem) {
 // Função para curtir ou descutir postagem
 async function curtirPublicacao(idUsuario, idPostagem) {
     try {
-        // Enviando a postagem para o backend
+        // Enviando a curtida para o backend
         fetch('https://inter-project-d39u.onrender.com/curtirPostagem', {
             method: 'POST',
             headers: {
