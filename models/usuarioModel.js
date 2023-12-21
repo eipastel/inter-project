@@ -15,14 +15,15 @@ async function criarTabela() {
           token VARCHAR(255),
           nome VARCHAR(255),
           bio VARCHAR(200),
+          seguindo INT,
+          seguidores INT,
           data_de_nascimento VARCHAR(10),
           usuario VARCHAR(50),
           email VARCHAR(255),
           criadoEm VARCHAR(30),
           senha VARCHAR(255),
           id_tipo_usuario INT DEFAULT 3
-        );
-      `;
+        );`;
     } catch (error) {
       console.error('Erro ao criar tabela de usuários: ', error.message);
     }

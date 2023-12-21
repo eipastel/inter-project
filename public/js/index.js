@@ -1,6 +1,8 @@
 // Variáveis iniciais
 let listaDeAtt = [];
 let tipoUsuario;
+const API = `https://inter-project-d39u.onrender.com/`
+// const API = `http://localhost:3000/`
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
@@ -31,192 +33,84 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
-// Função para carregar postagens
+// Função para carregar e exibir postagens
 async function carregarPostagens() {
     try {
-        const response = await fetch('https://inter-project-d39u.onrender.com/postagens');
+        // Buscar as últimas postagens do servidor
+        const response = await fetch(`${API}postagens`);
         const data = await response.json();
-        const postagens = data.postagensFormatadas;
-        const usuarioLogado = await descobrirUsuarioLogado();
-        const todasAtualizacoes = document.querySelector('.container-atualizacoes');
-        let containerAtualizacoes = document.querySelector('.container-atualizacoes');
-        let cabecalhoDaAtualizacao, conteudoAtualizacao, acoesExtras, infoAcoesExtras, containerComentarios, containerComentar, comentarios, quantidadeCurtidas, estadoCurtida;
-        containerAtualizacoes.innerHTML = '';
+        const postagensDoServidor = data.postagensFormatadas;
 
-        for(let index = 0; index < postagens.length; index++) {
-            comentarios = ``
-            quantidadeCurtidas = 0
-            let infoUsuarioCurtiu = await verificarCurtida(usuarioLogado.id, postagens[index].id);
-            quantidadeCurtidas = infoUsuarioCurtiu.quantidadeDeCurtidas
-
-            // Se o usuário curtiu a publicação, trocar as classes e adicionar o css
-            if(infoUsuarioCurtiu.curtido && infoUsuarioCurtiu.idUsuario == usuarioLogado.id) {
-                estadoCurtida = `fa-solid comentario-curtido`;
-                estadoTextoCurtir =`Curtido`;
-            } else {
-                estadoCurtida = `fa-regular `;
-                estadoTextoCurtir = `Curtir`;
-            }
-
-            let comentariosDoPost = postagens[index].comentarios
-            if(comentariosDoPost.length) {
-                // Para cada comentário, adiciona-lo na div container-comentario
-                for(let index = 0; index < comentariosDoPost.length; index++) {
-                    comentarios += `
-                        <div class="comentario">
-                            <h3>${comentariosDoPost[index].nomeUsuario}</h3>
-                            <p>${comentariosDoPost[index].comentario}</p>
-                        </div>
-                    `;
-                }
-            } else {
-                containerComentarios = ``;
-            }
-
-            containerComentarios = `
-            <div class="container-comentarios"> 
-                ${comentarios}
-            </div>`
-
-            cabecalhoDaAtualizacao = `
-                <div class="cabecalho-da-atualizacao">
-                    <div class="imagem-cabecalho">
-                        <img src="/img/foto-exemplo-perfil.jpg" alt="Foto usuário da postagem">
-                    </div>
-                    <div class="textos-cabecalho">
-                        <h2 onclick="irParaPerfil('${postagens[index].usuario}');">${postagens[index].nomeUsuario}</h2>
-                        <p>${dataFormatada(postagens[index].criadoem)}</p>
-                    </div>
-                </div>`;
-
-            // Se tiver imagem!!
-            // conteudoAtualizacao = `
-            //     <div class="conteudo-atualizacao">
-            //         <p class="textos-atualizacao">${postagens[index].mensagemnovaatt}</p>
-            //         <img src="/img/teste.png" alt="Imagem do post do usuário">
-            //     </div>`;
-
-            conteudoAtualizacao = `
-                <div class="conteudo-atualizacao">
-                    <p class="textos-atualizacao">${postagens[index].mensagemnovaatt}</p>
-                </div>`;
-            
-            acoesExtras = `
-                <div class="acoes-extras">
-                    <div class="acao-curtir comentariocurtido-${postagens[index].id}" onclick="curtirPublicacao(${usuarioLogado.id}, ${postagens[index].id})";>
-                        <i id="icone-da-postagem-${postagens[index].id}" class="${estadoCurtida} fa-heart"></i>
-                        <p>${estadoTextoCurtir}</p>
-                    </div>
-                    <div onclick="focarComentario(${postagens[index].id});" class="acao-comentar">
-                        <iclass="fa-regular fa-comment"></i>
-                        <p>Comentar</p>
-                    </div>
-                </div>`;
-            
-            infoAcoesExtras = `
-                <div class="info-acoes-extras">
-                    <p class="info-curtidas curtidas-post-${postagens[index].id}">${quantidadeCurtidas} Curtidas</p>
-                    <p class="info-comentarios">${comentariosDoPost.length} Comentários</p>
-                </div>`;
-
-            containerComentar = `
-                <div class="container-comentar">
-                    <img src="/img/foto-exemplo-perfil.jpg" width="48px" alt="Foto usuário da postagem">
-                    <input maxlength="60" type="text" class="comentario-input-postagem-${postagens[index].id}" name="comentario" id="comentario" placeholder="Adicione o seu comentário...">
-                    <button id="botao-postar-comentario" onclick="comentarPostagem(${usuarioLogado.id}, ${postagens[index].id});">Comentar</button>
-                </div>`;
-
-            const novaDiv = document.createElement("div");
-            novaDiv.innerHTML = `
-                <div class="container-da-atualizacao postagem-${postagens[index].id}">
-                    ${cabecalhoDaAtualizacao}
-
-                    ${conteudoAtualizacao}
-
-                    <div class="container-extras">
-                        ${acoesExtras}
-
-                        ${infoAcoesExtras}
-
-                        ${containerComentarios}
-                    </div>
-
-                    ${containerComentar}
-                </div>
-            `;
-
-            // Adiciona a nova postagem ao início da lista
-            todasAtualizacoes.insertBefore(novaDiv, todasAtualizacoes.firstChild);
-        }
+        // Renderizar as postagens no DOM
+        renderizarPostagens(postagensDoServidor);
     } catch (error) {
         console.error('Erro ao carregar postagens:', error);
     }
-};
+}
 
+// Função para postar uma nova atualização
 async function postar() {
-    // Se for um usuário Verificado ou Administrador a atualização será postada
-    if(tipoUsuario === "Verificado" || tipoUsuario === "Administrador") {
-        // Variáveis iniciais
-        let mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
-        let mensagemNovaAtt = mensagemNovaAttInput.value;
+    try {
+        // Se for um usuário Verificado ou Administrador a atualização será postada
+        if (tipoUsuario === "Verificado" || tipoUsuario === "Administrador") {
+            // Variáveis iniciais
+            const mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
+            const mensagemNovaAtt = mensagemNovaAttInput.value;
 
-        // Bloqueando clicks por 3 segundos após postar
-        let janelaTela = document.body
-        janelaTela.style.pointerEvents = 'none';
-        setTimeout(() => {
-            janelaTela.style.pointerEvents = 'auto';
-        }, 3000);
+            if (!mensagemNovaAtt || mensagemNovaAtt.trim() === "") {
+                alert("Preencha o campo para fazer uma postagem!");
+                return;
+            }
 
-        if(!mensagemNovaAtt || mensagemNovaAtt.trim() == "") {
-            alert("Preencha o campo para fazer uma postagem!")
-            return;
+            // Desabilitar o botão de postagem
+            const botaoPostar = document.getElementById('botao-postar-atualizacao');
+            botaoPostar.disabled = true;
+
+            // Limpando o campo da atualização
+            mensagemNovaAttInput.value = "";
+            fecharModalPost();
+
+            // Double check do usuário logado
+            const usuarioLogado = await descobrirUsuarioLogado();
+            if (!usuarioLogado) {
+                console.log("Usuário não encontrado. A atualização não será postada.");
+                return;
+            }
+
+            // Criando o objeto da nova atualização
+            const novaAtt = {
+                mensagemNovaAtualizacao: mensagemNovaAtt,
+                idUsuario: usuarioLogado.id,
+                criadoEm: dataAtual(),
+            };
+
+            // Enviando a postagem para o backend
+            const response = await fetch(`${API}postar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+                body: JSON.stringify(novaAtt),
+            });
+
+        // Verificando se a postagem foi bem-sucedida antes de carregar as postagens
+        if (response.ok) {
+            // Atualizando as postagens na tela
+            await carregarPostagens();
+        } else {
+            console.error('Erro ao postar atualização:', response.status, response.statusText);
         }
-
-        // Limpando o campo da atualização
-        mensagemNovaAttInput.value = "";
-
-        // Double check do usuário logado
-        const usuarioLogado = await descobrirUsuarioLogado();
-        if (!usuarioLogado) {
-            console.log("Usuário não encontrado. A atualização não será postada.");
-            return;
         }
-
-        // Criando o objeto da nova atualização
-        let novaAtt = {
-            mensagemNovaAtualizacao: mensagemNovaAtt,
-            idUsuario: usuarioLogado.id,
-            criadoEm: dataAtual()
-        }
-
-        // Fechando o modal no momento que o post é feito.
-        fecharModalPost();
-
-        // Enviando a postagem para o backend
-        fetch('https://inter-project-d39u.onrender.com/postar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('jwtToken'),
-        },
-        body: JSON.stringify({
-            mensagemNovaAtualizacao: novaAtt.mensagemNovaAtualizacao,
-            idUsuario: novaAtt.idUsuario,
-            criadoEm: novaAtt.criadoEm
-        }),
-        })
-        .then(response => response.json())
-        .catch((error) => {
-            // Caso haja algum erro não identificado do servidor ou outro.
-            console.error('Erro não identificado:', error);
-        });
-        // Atualizando as postagens na tela
-        carregarPostagens();
-    } else {
-        // Se for um usuário do tipo Espectador
-        alert(`Como ${tipoUsuario = "usuário não logado"} você não tem permissão para postar!`);
+    } catch (error) {
+        console.error('Erro ao postar atualização:', error);
+        alert('Erro ao postar atualização. Tente novamente mais tarde.');
+    } finally {
+        // Habilitar o botão de postagem, independentemente do resultado
+        const botaoPostar = document.getElementById('botao-postar-atualizacao');
+        botaoPostar.disabled = false;
     }
-};
+}
 
 // Funções utilitárias
 function dataAtual() {
@@ -253,7 +147,7 @@ async function descobrirUsuarioLogado() {
         }
 
         // Faça a requisição para o backend com o token no cabeçalho
-        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
+        const response = await fetch(`${API}usuarioLogado`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -300,7 +194,7 @@ async function excluirPostagem(idPostagem) {
     if(temCerteza) {
         try {
             // Faça a solicitação para o backend para excluir a postagem
-            const response = await fetch(`https://inter-project-d39u.onrender.com/excluirPostagem/${idPostagem}`, {
+            const response = await fetch(`${API}excluirPostagem/${idPostagem}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -331,8 +225,10 @@ async function excluirPostagem(idPostagem) {
 // Função para curtir ou descutir postagem
 async function curtirPublicacao(idUsuario, idPostagem) {
     try {
+        // Atualizando na tela o comentário curtido
+        formatarCurtidas(idPostagem);
         // Enviando a curtida para o backend
-        fetch('https://inter-project-d39u.onrender.com/curtirPostagem', {
+        const response = await fetch(`${API}curtirPostagem`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -341,46 +237,40 @@ async function curtirPublicacao(idUsuario, idPostagem) {
             body: JSON.stringify({
                 idUsuario: idUsuario,
                 idPostagem: idPostagem,
-                curtidoEm: dataAtual()
+                curtidoEm: dataAtual(),
             }),
-            })
-            .then(response => response.json())
-            .catch((error) => {
-                // Caso haja algum erro não identificado do servidor ou outro.
-                throw error
-            });
+        });
 
-            // Desativando o usuário de clicar por 3 segundos segundo
-            let divCurtir = document.querySelector(`.comentariocurtido-${idPostagem}`)
-            divCurtir.style.pointerEvents = 'none';
-            setTimeout(() => {
-                divCurtir.style.pointerEvents = 'auto';
-            }, 3000);
-
-
-            let iconDaPostagem = document.getElementById(`icone-da-postagem-${idPostagem}`);
-            if(iconDaPostagem.classList.value.includes('fa-regular')) {
-                formatarCurtidas(idPostagem, 'adicionar');
-            } else {
-                formatarCurtidas(idPostagem, 'remover');
-            }
-    } catch(error) {
-        throw error
+        // Verificando se a ação foi bem-sucedida
+        if (response.ok) {
+            // 
+        } else {
+            console.error('Erro ao curtir/descurtir atualização:', response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error('Erro ao curtir/descurtir atualização:', error);
+        alert('Erro ao curtir/descurtir atualização. Tente novamente mais tarde.');
     }
-};
+}
 
 // Função para curtir ou descutir postagem
-async function comentarPostagem(idUsuario, idPostagem) {
+async function comentarPostagem(idUsuario, idPostagem, nomeUsuarioLogado) {
     try {
         let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
-        let comentario = inputComentario.value
+        let comentario = inputComentario.value;
 
-        if(!comentario || comentario.trim() === "") {
+        if (!comentario || comentario.trim() === "") {
             alert("Preencha o campo de comentário para comentar!");
             return;
         } else {
+            // Adicionando o comentário diretamente na tela
+            adicionarComentarioNaTela(idPostagem, {
+                nomeusuario: nomeUsuarioLogado,
+                comentario: comentario
+            });
+            inputComentario.value = ""
             // Enviando o comentário para o backend
-            fetch('https://inter-project-d39u.onrender.com/comentarPostagem', {
+            const response = await fetch(`${API}comentarPostagem`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -391,57 +281,65 @@ async function comentarPostagem(idUsuario, idPostagem) {
                     idPostagem: idPostagem,
                     comentario: comentario,
                 }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                if (data.error) {
-                    // Tratando caso haja um erro
+            });
 
-                } else {
-                    // Sucesso ao comentar (limpando o campo e atualizando as postagens na tela)
-                    inputComentario.value = '';
-                    carregarPostagens();
-                }
-                })
-                .catch((error) => {
-                    // Caso haja algum erro não identificado do servidor ou outro.
-                    console.error('Erro não identificado:', error);
-                });
-            }     
-    } catch(error) {
-        console.error("Erro não identificado: ", error)
+            // Verificando se a ação foi bem-sucedida
+            if (response.ok) {
+                // Tratativa da resposta OK do backend
+            } else {
+                console.error('Erro ao comentar na atualização:', response.status, response.statusText);
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao comentar na atualização:', error);
+        alert('Erro ao comentar na atualização. Tente novamente mais tarde.');
     }
 }
 
-// Função para editar postagem
-function editarPostagem(idPostagem) {
+// Função para adicionar um comentário na tela
+function adicionarComentarioNaTela(idPostagem, comentario) {
+    const containerComentarios = document.querySelector(`.container-comentarios-${idPostagem}`);
 
+    if (containerComentarios) {
+        const divComentario = document.createElement("div");
+        divComentario.classList.add("comentario");
+        divComentario.innerHTML = `<h3>${comentario.nomeusuario}</h3><p>${comentario.comentario}</p>`;
 
-
+        containerComentarios.appendChild(divComentario);
+    } else {
+        console.warn(`Container de comentários não encontrado para a postagem ${idPostagem}`);
+    }
 }
 
-// Função para formatar a quantidade de curtidas (adicionar 1)
-function formatarCurtidas(idPostagem, acao) {
-    let quantidadeCurtidasParagrafo = document.querySelector(`.curtidas-post-${idPostagem}`);
+// Função para editar postagem (não implementada)
+function editarPostagem(idPostagem) {
+}
+
+// Função para modificar a quantidade e a palavra de curtidas na tela
+function formatarCurtidas(idPostagem) {
     let iconDaPostagem = document.getElementById(`icone-da-postagem-${idPostagem}`);
+    let quantidadeCurtidasParagrafo = document.querySelector(`.curtidas-post-${idPostagem}`);
+    let estadoTextoCurtir = document.querySelector(`.estado-texto-curtir-${idPostagem}`);
     let quantidadeCurtidas = quantidadeCurtidasParagrafo.textContent
     let arrayQuantidadeCurtidas = quantidadeCurtidas.split(" ");
     let novoValor = arrayQuantidadeCurtidas[0]
 
-    if(acao == 'remover') {
-        novoValor--
+    if (estadoTextoCurtir.textContent == "Curtido") {
+        novoValor--;
         iconDaPostagem.classList.remove('fa-solid');
         iconDaPostagem.classList.remove('comentario-curtido');
         iconDaPostagem.classList.add('fa-regular');
-    } else if(acao == 'adicionar') {
-        novoValor++
+        estadoTextoCurtir.textContent = "Curtir";
+    } else if (estadoTextoCurtir.textContent == "Curtir") {
+        novoValor++;
         iconDaPostagem.classList.add('fa-solid');
         iconDaPostagem.classList.add('comentario-curtido');
         iconDaPostagem.classList.remove('fa-regular');
+        estadoTextoCurtir.textContent = "Curtido";
     }
 
     arrayQuantidadeCurtidas[0] = novoValor;
-    quantidadeCurtidasParagrafo.textContent = `${arrayQuantidadeCurtidas[0]} Curtidas`
+    quantidadeCurtidasParagrafo.textContent = `${arrayQuantidadeCurtidas[0]} ${novoValor != 1 ? 'Curtidas' : 'Curtida'}`
 }
 
 // Função para formatar a data do banco para o formato semântico
@@ -470,23 +368,197 @@ async function abrirModalPost() {
     modalCriacaoPost.style.display = "block"
 };
 
+// Função para fechar modal de criar novo post
 function fecharModalPost() {
     const modalCriacaoPost = document.querySelector('.container-modal-para-postar');
     modalCriacaoPost.style.display = "none"
 }
 
+// Função para focar o teclado no input de comentário
 function focarComentario(idPostagem) {
     let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
-    inputComentario.focus()
+    inputComentario.focus();
 }
 
-async function verificarCurtida(idUsuario, idPostagem) {
-    try {
-        const response = await fetch(`https://inter-project-d39u.onrender.com/verificarCurtida/${idUsuario}/${idPostagem}`);
-        const data = await response.json();
+// Função para renderizar postagens no DOM
+async function renderizarPostagens(postagens) {
+    const usuarioLogado = await descobrirUsuarioLogado();
+    const idUsuarioLogado = usuarioLogado.id;
+    const todasAtualizacoes = document.querySelector('.container-atualizacoes');
+    
+    todasAtualizacoes.innerHTML = '';
 
-        return data;
-    } catch(error) {
-        throw error;
+    postagens.forEach(postagem => {
+        const idPostagem = postagem.id;
+        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem));
+        const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
+        const acoesExtras = criarAcoesExtras(idPostagem, postagem.curtidas, idUsuarioLogado);
+        const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
+        const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
+        const containerComentar = criarFormularioComentario(idPostagem, usuarioLogado);
+
+        const divMaior = document.createElement("div");
+        const novaDiv = document.createElement("div");
+        novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
+        novaDiv.innerHTML = `
+            ${cabecalhoDaAtualizacao.outerHTML}
+            ${conteudoAtualizacao.outerHTML}
+            <div class="container-extras">
+                ${acoesExtras.outerHTML}
+                ${infoAcoesExtras.outerHTML}
+                ${containerComentarios.outerHTML}
+            </div>
+            ${containerComentar.outerHTML}
+        `;
+
+        divMaior.innerHTML = `
+                ${novaDiv.outerHTML}
+        `;
+
+        // Adiciona a nova postagem no final da lista
+        todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
+    });
+}
+
+// Função para criar o cabeçalho da atualização
+function criarCabecalhoAtualizacao(nomeUsuario, criadoEm) {
+    const cabecalhoDaAtualizacao = document.createElement("div");
+    cabecalhoDaAtualizacao.classList.add("cabecalho-da-atualizacao");
+
+    const imagemCabecalho = document.createElement("div");
+    imagemCabecalho.classList.add("imagem-cabecalho");
+    imagemCabecalho.innerHTML = `<img src="/img/foto-exemplo-perfil.jpg" alt="Foto usuário da postagem">`;
+
+    const textosCabecalho = document.createElement("div");
+    textosCabecalho.classList.add("textos-cabecalho");
+    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${nomeUsuario}');">${nomeUsuario}</h2><p>${criadoEm}</p>`;
+
+    cabecalhoDaAtualizacao.appendChild(imagemCabecalho);
+    cabecalhoDaAtualizacao.appendChild(textosCabecalho);
+
+    return cabecalhoDaAtualizacao;
+}
+
+// Função para criar o conteúdo da atualização
+function criarConteudoAtualizacao(mensagem) {
+    const conteudoAtualizacao = document.createElement("div");
+    conteudoAtualizacao.classList.add("conteudo-atualizacao");
+    conteudoAtualizacao.innerHTML = `<p class="textos-atualizacao">${mensagem}</p>`;
+
+    return conteudoAtualizacao;
+}
+
+// Função para criar as ações extras
+function criarAcoesExtras(idPostagem, curtidas, idUsuarioLogado) {
+    const acoesExtras = document.createElement("div");
+    acoesExtras.classList.add("acoes-extras");
+
+    let estaCurtidoPeloUsuarioLogado = false;
+    for(let index = 0; index < curtidas.length; index++) {
+        if(curtidas[index].idusuario == idUsuarioLogado) {
+            estaCurtidoPeloUsuarioLogado = true;
+        }
     }
+
+    const acaoCurtir = document.createElement("div");
+    acaoCurtir.classList.add("acao-curtir", `comentariocurtido-${idPostagem}`);
+    acaoCurtir.setAttribute("onclick", `curtirPublicacao(${idUsuarioLogado}, ${idPostagem})`);
+
+    acaoCurtir.innerHTML = `
+    <i id="icone-da-postagem-${idPostagem}" class="${estaCurtidoPeloUsuarioLogado ? 'fa-solid comentario-curtido' : 'fa-regular'} fa-heart"></i>
+    <p class="estado-texto-curtir-${idPostagem}">${estaCurtidoPeloUsuarioLogado ? 'Curtido' : 'Curtir'}</p>`;
+    
+    const acaoComentar = document.createElement("div");
+    acaoComentar.classList.add("acao-comentar");
+    acaoComentar.setAttribute("onclick", `focarComentario(${idPostagem})`);
+    acaoComentar.innerHTML = `<i class="fa-regular fa-comment"></i><p>Comentar</p>`;
+
+    acoesExtras.appendChild(acaoCurtir);
+    acoesExtras.appendChild(acaoComentar);
+
+    return acoesExtras;
+}
+
+// Função para criar o container de comentários
+function criarContainerComentarios(arrayComentarios, idPostagem) {
+    const containerComentarios = document.createElement("div");
+    containerComentarios.classList.add("container-comentarios", `container-comentarios-${idPostagem}`);
+
+    // Verifica se há comentários
+    if (arrayComentarios[0].id != null) {
+        for(let index = 0; index < arrayComentarios.length; index++) {
+            const comentario = arrayComentarios[index];
+
+            const divComentario = document.createElement("div");
+            divComentario.classList.add("comentario");
+
+            const nomeUsuario = comentario.nomeusuario
+            divComentario.innerHTML = `<h3>${nomeUsuario}</h3><p>${comentario.comentario}</p>`;
+
+            containerComentarios.insertBefore(divComentario, containerComentarios.firstChild);
+        }
+    } else {
+        // Tratativa para caso não hajam comentários
+    }
+    return containerComentarios;
+}
+
+// Função para criar o formulário de comentário
+function criarFormularioComentario(idPostagem, usuarioLogado) {
+    const containerComentar = document.createElement("div");
+    containerComentar.classList.add("container-comentar");
+    containerComentar.innerHTML = `
+        <img src="/img/foto-exemplo-perfil.jpg" width="48px" alt="Foto usuário da postagem">
+        <input maxlength="60" type="text" class="comentario-input-postagem-${idPostagem}" name="comentario" id="comentario" placeholder="Adicione o seu comentário...">
+        <button id="botao-postar-comentario" onclick="comentarPostagem(${usuarioLogado.id}, ${idPostagem}, '${usuarioLogado.nome}');">Comentar</button>`;
+    return containerComentar;
+}
+
+// Função para criar as informações extras de ações
+function criarInfoAcoesExtras(idPostagem, comentarios, curtidas) {
+    const infoAcoesExtras = document.createElement("div");
+    infoAcoesExtras.classList.add("info-acoes-extras");
+    let singPluralCurtida, singPluralComentarios, quantidadeCurtidas, quantidadeComentarios;
+
+    if(curtidas[0].id != null) {
+        quantidadeCurtidas = curtidas.length;
+    } else {
+        quantidadeCurtidas = 0;
+    }
+
+    if(comentarios[0].id != null) {
+        quantidadeComentarios = comentarios.length;
+    } else {
+        quantidadeComentarios = 0;
+    }
+
+    switch (quantidadeCurtidas) {
+        case 0:
+            singPluralCurtida = "Curtidas";
+            break;
+        case 1:
+            singPluralCurtida = "Curtida";
+            break;
+        default:
+            singPluralCurtida = "Curtidas";
+            break;
+    }
+
+    switch (quantidadeComentarios) {
+        case 0:
+            singPluralComentarios = "Comentários";
+            break;
+        case 1:
+            singPluralComentarios = "Comentário";
+            break;
+        default:
+            singPluralComentarios = "Comentários";
+            break;
+    }
+
+    infoAcoesExtras.innerHTML = `
+        <p class="info-curtidas curtidas-post-${idPostagem}">${quantidadeCurtidas} ${singPluralCurtida}</p>
+        <p class="info-comentarios">${quantidadeComentarios} ${singPluralComentarios}</p>
+    `;
+    return infoAcoesExtras;
 }

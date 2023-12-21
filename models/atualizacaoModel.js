@@ -12,9 +12,9 @@ async function criarTabela() {
         removidoEm VARCHAR(30),
         disponivel BOOLEAN NOT NULL DEFAULT true,
         editadoEm VARCHAR(30)
-        );`;
-
-        `CREATE TABLE IF NOT EXISTS curtidas (
+        );
+        
+        CREATE TABLE IF NOT EXISTS curtidas (
           id SERIAL PRIMARY KEY,
           id_usuario INT,
           id_postagem INT,
@@ -72,48 +72,51 @@ async function curtirPostagem({ idUsuario, idPostagem, curtidoEm }) {
 // Model para mostrar as postagens
 async function carregarPostagens() {
   try {
-    let postagensFormatadas = []
-    let postagem;
-
-    let todasPostagens = await db`
-      SELECT * FROM atualizacoes
-      ORDER BY id ASC;
+    // Consulta principal
+    let postagensFormatadas = await db`
+      SELECT
+      atualizacoes.id AS id,
+      atualizacoes.mensagemNovaAtt AS mensagemnovaatt,
+      usuarios.usuario AS usuario,
+      (
+        SELECT nome
+        FROM usuarios
+        WHERE usuarios.id = atualizacoes.id_usuario
+        LIMIT 1
+      ) AS nomeusuario,
+      atualizacoes.criadoEm AS criadoem,
+      ARRAY_AGG(DISTINCT (
+        SELECT JSON_BUILD_OBJECT('id', curtidas.id, 'idusuario', curtidas.id_usuario)::TEXT
+      )) AS curtidas,
+      ARRAY_AGG(DISTINCT (
+        SELECT JSON_BUILD_OBJECT('id', comentarios.id, 'nomeusuario', (SELECT nome FROM usuarios WHERE usuarios.id = comentarios.id_usuario LIMIT 1), 'comentario', comentarios.comentario)::TEXT
+      )) AS comentarios
+      FROM atualizacoes
+      LEFT JOIN usuarios ON atualizacoes.id_usuario = usuarios.id
+      LEFT JOIN curtidas ON atualizacoes.id = curtidas.id_postagem
+      LEFT JOIN comentarios ON atualizacoes.id = comentarios.id_postagem
+      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario
+      ORDER BY atualizacoes.id ASC;
     `;
 
-    if (!todasPostagens || todasPostagens.length === 0) {
+    if (!postagensFormatadas || postagensFormatadas.length === 0) {
       // Tratando se não encontrar nenhuma publicação
       return null;
     }
 
-    for(let index = 0; index < todasPostagens.length; index++) {
-      let usuarioDaPostagem = await db`
-      SELECT * FROM usuarios WHERE id = ${todasPostagens[index].id_usuario};
-      `
-      
-      let todosOsComentariosDaPostagem = await comentarioController.comentariosDaPostagem(todasPostagens[index].id);
+    postagensFormatadas.forEach(postagem => {
+      postagem.curtidas = postagem.curtidas.map(jsonString => JSON.parse(jsonString));
+      postagem.comentarios = postagem.comentarios.map(jsonString => JSON.parse(jsonString));
+    });
 
-      postagem = {
-        id: todasPostagens[index].id,
-        nomeUsuario: usuarioDaPostagem[0].nome,
-        usuario: usuarioDaPostagem[0].usuario,
-        comentarios: todosOsComentariosDaPostagem,
-        mensagemnovaatt: todasPostagens[index].mensagemnovaatt,
-        criadoem: todasPostagens[index].criadoem,
-        idUsuario: todasPostagens[index].id_usuario
-      };
-
-      postagensFormatadas.push(postagem);
-    }
-
-    return postagensFormatadas
-    } catch (error) { 
-      throw error;
+    return postagensFormatadas;
+  } catch (error) {
+    throw error;
   }
 }
 
 async function excluirPostagem(idPostagem) {
   try {
-
     let statusRemocao = await db`
       DELETE FROM atualizacoes
       WHERE id = ${idPostagem};
@@ -125,42 +128,6 @@ async function excluirPostagem(idPostagem) {
   }
 }
 
-async function verificarCurtida({ idUsuario, idPostagem }) {
-    try {
-    let curtidaFormatada = {}
-
-    const curtidasDoUsuario = await db`
-      SELECT * FROM curtidas WHERE id_usuario = ${idUsuario} AND id_postagem = ${idPostagem};
-    `;
-
-    const curtidasDoPost = await db`
-      SELECT * FROM curtidas WHERE id_postagem = ${idPostagem};
-    `;
-
-    let quantidadeDeCurtidas = curtidasDoPost.length;
-
-    if(curtidasDoUsuario.length <= 0) {
-      curtidaFormatada = {
-        curtido: false,
-        quantidadeDeCurtidas: quantidadeDeCurtidas,
-      }
-    } else {
-      curtidaFormatada = {
-        curtido: true,
-        idUsuario: idUsuario,
-        idPostagem: idPostagem,
-        idCurtida: curtidasDoUsuario.id,
-        quantidadeDeCurtidas: quantidadeDeCurtidas,
-      }
-    }
-
-    return curtidaFormatada;
-  } catch(error) {
-    throw error
-  }
-  
-}
-
 module.exports = {
     // Funções exportadas:
     criarTabela,
@@ -168,6 +135,5 @@ module.exports = {
     carregarPostagens,
     excluirPostagem,
     curtirPostagem,
-    verificarCurtida,
 
 };

@@ -128,11 +128,6 @@ body {
   transform: scale(1.1);
 }
 
-/* Adições/remoções dinâmicas */
-.erro-ao-registrar {
-  border: 1px solid rgb(255, 53, 53);
-}
-
 .modal {
   display: none;
   position: fixed;
@@ -166,15 +161,6 @@ body {
   cursor: pointer;
   font-size: 30px;
 }
-
-
-
-
-
-
-
-
-
 
 .links-container {
   display: flex;

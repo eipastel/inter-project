@@ -1,3 +1,6 @@
+const API = `https://inter-project-d39u.onrender.com/`
+// const API = `http://localhost:3000/`
+
 // Assim que a página carrega, verifica se o usuário está logado
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
@@ -93,7 +96,7 @@ document.querySelector('.botao-de-registro').addEventListener('click', (evento) 
 
         try {
             // Enviando o usuário para o backend
-            fetch('https://inter-project-d39u.onrender.com/registrar', {
+            fetch(`${API}registrar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -172,7 +175,7 @@ async function descobrirUsuarioLogado() {
         }
 
         // Faça a requisição para o backend com o token no cabeçalho
-        const response = await fetch('https://inter-project-d39u.onrender.com/usuarioLogado', {
+        const response = await fetch(`${API}usuarioLogado`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
