@@ -1,12 +1,14 @@
 // Variáveis iniciais
-let listaDeAtt = [];
 let tipoUsuario;
+
 const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
+const barraProgresso = document.getElementById('progresso');
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
+    simularCarregamento(250);
     carregarPostagens();
     
     // Caso o usuário esteja logado, trocando as informações.
@@ -299,14 +301,21 @@ async function comentarPostagem(idUsuario, idPostagem, nomeUsuarioLogado) {
 // Função para adicionar um comentário na tela
 function adicionarComentarioNaTela(idPostagem, comentario) {
     const containerComentarios = document.querySelector(`.container-comentarios-${idPostagem}`);
+    const quantidadeComentariosParagrafo = document.querySelector(`.info-comentarios-${idPostagem}`)
+    let quantidadeComentarios = quantidadeComentariosParagrafo.textContent
+    let arrayQuantidadeComentarios = quantidadeComentarios.split(" ");
+    let novoValor = arrayQuantidadeComentarios[0]
 
     if (containerComentarios) {
         const divComentario = document.createElement("div");
         divComentario.classList.add("comentario");
         divComentario.innerHTML = `<h3>${comentario.nomeusuario}</h3><p>${comentario.comentario}</p>`;
-
         containerComentarios.appendChild(divComentario);
-    } else {
+
+        novoValor++
+        arrayQuantidadeComentarios[0] = novoValor;
+        quantidadeComentariosParagrafo.textContent = `${arrayQuantidadeComentarios[0]} ${novoValor != 1 ? 'Comentários' : 'Comentário'}`
+        } else {
         console.warn(`Container de comentários não encontrado para a postagem ${idPostagem}`);
     }
 }
@@ -385,12 +394,10 @@ async function renderizarPostagens(postagens) {
     const usuarioLogado = await descobrirUsuarioLogado();
     const idUsuarioLogado = usuarioLogado.id;
     const todasAtualizacoes = document.querySelector('.container-atualizacoes');
-    
     todasAtualizacoes.innerHTML = '';
-
     postagens.forEach(postagem => {
         const idPostagem = postagem.id;
-        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem));
+        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem), postagem.usuario);
         const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
         const acoesExtras = criarAcoesExtras(idPostagem, postagem.curtidas, idUsuarioLogado);
         const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
@@ -418,10 +425,13 @@ async function renderizarPostagens(postagens) {
         // Adiciona a nova postagem no final da lista
         todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
     });
+    
+    // Parando de mostrar o carregamento
+    barraProgresso.style.display = 'none';
 }
 
 // Função para criar o cabeçalho da atualização
-function criarCabecalhoAtualizacao(nomeUsuario, criadoEm) {
+function criarCabecalhoAtualizacao(nomeUsuario, criadoEm, usuario) {
     const cabecalhoDaAtualizacao = document.createElement("div");
     cabecalhoDaAtualizacao.classList.add("cabecalho-da-atualizacao");
 
@@ -431,7 +441,7 @@ function criarCabecalhoAtualizacao(nomeUsuario, criadoEm) {
 
     const textosCabecalho = document.createElement("div");
     textosCabecalho.classList.add("textos-cabecalho");
-    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${nomeUsuario}');">${nomeUsuario}</h2><p>${criadoEm}</p>`;
+    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${usuario}');">${nomeUsuario}</h2><p>${criadoEm}</p>`;
 
     cabecalhoDaAtualizacao.appendChild(imagemCabecalho);
     cabecalhoDaAtualizacao.appendChild(textosCabecalho);
@@ -558,7 +568,12 @@ function criarInfoAcoesExtras(idPostagem, comentarios, curtidas) {
 
     infoAcoesExtras.innerHTML = `
         <p class="info-curtidas curtidas-post-${idPostagem}">${quantidadeCurtidas} ${singPluralCurtida}</p>
-        <p class="info-comentarios">${quantidadeComentarios} ${singPluralComentarios}</p>
+        <p class="info-comentarios info-comentarios-${idPostagem}">${quantidadeComentarios} ${singPluralComentarios}</p>
     `;
     return infoAcoesExtras;
+}
+
+// Função para simular o carregamento
+function simularCarregamento(progresso) {
+    barraProgresso.style.width = progresso + '%';
 }

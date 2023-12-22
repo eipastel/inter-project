@@ -3,10 +3,10 @@ const perfilController = require('../controllers/perfilController');
 
 const router = express.Router();
 
-// Rota para exibir redirecionar para o perfil específico
-router.get('/perfil/:nomeUsuario', perfilController.irParaPerfil);
+// Rota para exibir o próprio perfil
+router.get('/perfil', perfilController.meuPerfil);
 
-// Rota para exibir o perfil de usuário específico
-router.get('/obterPerfil/:nomeUsuario', perfilController.obterUsuario);
+// Defina a rota para obter informações detalhadas do usuário
+router.get('/usuario/:idUsuarioLogado', perfilController.obterInformacoesUsuario);
 
 module.exports = router;

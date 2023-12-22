@@ -25,6 +25,7 @@ html {
 
 body {
     background-color: var(--branco);
+    padding-bottom: 4rem;
 }
 
 /* Cabeçalho */
@@ -107,6 +108,7 @@ div.logo a h1 {
 .barra-de-navegacao .opcao-menu img {
     width: 50px;
     cursor: pointer;
+    border-radius: 50%;
 }
 
 /* Dropdown */
@@ -185,6 +187,7 @@ div.logo a h1 {
 .textos-cabecalho h2 {
     font-size: 1.3rem;
     font-weight: 600;
+    cursor: pointer;
 }
 
 .textos-cabecalho p {
@@ -586,4 +589,18 @@ div.logo a h1 {
     .visibilidade p {
         display: none;
     }
+}
+
+/* Indicador de carregamento */
+.barra-progresso-container {
+    width: 100%;
+    background-color: var(--branco);
+    overflow: hidden;
+}
+
+.barra-progresso {
+    height: 10px;
+    width: 0;
+    background-color: var(--azul);
+    transition: width 0.3s ease;
 }

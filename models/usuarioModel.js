@@ -2,9 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/dbConfig.js');
 const dotenv = require('dotenv');
-
 dotenv.config();
-
 const TOKEN_KEY = process.env.TOKEN_KEY;
 
 async function criarTabela() {

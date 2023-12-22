@@ -1,41 +1,35 @@
 const perfilModel = require('../models/perfilModel.js');
 const path = require('path');
 
-// Controlador para obter informações do perfil
-async function irParaPerfil(req, res, next) {
+async function meuPerfil(req, res, next) {
     try {
-        const { nomeUsuario } = req.params;
-        const resultadoConsulta = await perfilModel.obterPerfil(nomeUsuario);
-
-        if (resultadoConsulta.error) {
-            return res.status(409).json({ error: resultadoConsulta.error });
-        }
-
-        res.sendFile(path.join(__dirname, '../views/perfil.html'));
-    } catch (error) {
+        res.sendFile(path.join(__dirname, '../views/perfil.html'))
+    } catch(error) {
         next(error);
     }
 }
 
-// Controlador para obter informações do perfil
-async function obterUsuario(req, res, next) {
+// Função para obter informações detalhadas do usuário
+async function obterInformacoesUsuario(req, res, next) {
     try {
-        const { nomeUsuario } = req.params;
-        const resultadoConsulta = await perfilModel.obterPerfil(nomeUsuario);
+        const { idUsuarioLogado } = req.params;
+        const informacoesUsuario = await perfilModel.obterInformacoesUsuario(idUsuarioLogado);
 
-        if (resultadoConsulta.error) {
-            return res.status(409).json({ error: resultadoConsulta.error });
+        if (!informacoesUsuario) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
         }
 
-        res.json(resultadoConsulta);
+        res.json(informacoesUsuario);
     } catch (error) {
+        console.error('Erro ao obter informações do usuário:', error);
         next(error);
     }
 }
 
 module.exports = {
     // Funções exportadas:
-    irParaPerfil,
-    obterUsuario,
+    meuPerfil,
+    obterInformacoesUsuario,
+
     
 };
