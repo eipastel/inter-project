@@ -42,28 +42,28 @@ document.querySelector('.botao-de-registro').addEventListener('click', (evento) 
     let usuarioValido = false;
     let confirmacaoSenhaValida = false;
 
-    if(nome.length > 2 && !temNumero(nome) && !temEmoji(nome)) {
+    if(nome.length > 2 && !temNumero(nome)) {
         nomeValido = true;
     } else {
         // Tratativa caso o nome não esteja devidamente preenchido
         nomeValido = false;
     }
 
-    if(usuario.length < 3 || temEspacos(usuario) || temEmoji(usuario)) {
+    if(usuario.length < 3 || temEspacos(usuario)) {
         // Tratativa caso o usuário não esteja devidamente preenchido
         usuarioValido = false;
     } else {
         usuarioValido = true;
     }
 
-    if(email.length >= 9 && !temEmoji(email)) {
+    if(email.length >= 9) {
        emailValido = true;
     } else {
         // Tratativa caso o e-mail não esteja devidamente preenchido
         emailValido = false;
     }
 
-    if(senha.length > 2 && !temEmoji(senha)) {
+    if(senha.length > 2) {
         senhaValida = true;
     } else {
         // Tratativa caso a senha não esteja devidamente preenchida
