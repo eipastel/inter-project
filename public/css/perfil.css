@@ -443,9 +443,9 @@ div.logo a h1 {
 
 .profile-img, .editar-perfil-img {
     width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    min-height: 48px;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 .info-usuario-a-postar h5 {

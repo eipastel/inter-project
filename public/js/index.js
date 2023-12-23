@@ -2,8 +2,8 @@
 let tipoUsuario;
 let numeroPostagensCarregadas = 0;
 
-const API = `https://inter-project-d39u.onrender.com/`
-// const API = `http://localhost:3000/`
+// const API = `https://inter-project-d39u.onrender.com/`
+const API = `http://localhost:3000/`
 const barraProgresso = document.getElementById('progresso');
 
 document.getElementById('conteudo-da-atualizacao-a-postar').addEventListener('input', () => {
@@ -660,4 +660,4 @@ function formatarNomeCompleto(nomeCompleto) {
 
     // Se não houver mais partes, retorne apenas o primeiro nome capitalizado
     return primeiroNomeCapitalizado;
-  }
+}

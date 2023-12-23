@@ -1,5 +1,5 @@
-const API = `https://inter-project-d39u.onrender.com/`
-// const API = `http://localhost:3000/`
+// const API = `https://inter-project-d39u.onrender.com/`
+const API = `http://localhost:3000/`
 
 // Variáveis iniciais
 let tipoUsuario, fotoSelecionada;
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
 
             // Trocando as informações necessárias
-            nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${usuarioLogado.nome}</h5>`
+            nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${formatarNomeCompleto(usuarioLogado.nome)}</h5>`
             nomeUsuario.innerHTML = `<h2 class="nome-usuario">${perfilDoUsuario.nome}</h2>`;
             bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}</p>`;
             infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes[0].id === null ? 0 : perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
@@ -520,4 +520,18 @@ function temNumero(string) {
 function temEspacos(string) {
     const regex = /\s/g;
     return regex.test(string);
+}
+
+function formatarNomeCompleto(nomeCompleto) {
+    // Divindo o nome completo em partes usando o espaço como delimitador
+    const partesNome = nomeCompleto.split(' ');
+  
+    // Obtendo o primeiro nome
+    const primeiroNome = partesNome[0];
+  
+    // Capitalizando apenas o primeiro caractere do primeiro nome
+    const primeiroNomeCapitalizado = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1);
+
+    // Se não houver mais partes, retorne apenas o primeiro nome capitalizado
+    return primeiroNomeCapitalizado;
 }
