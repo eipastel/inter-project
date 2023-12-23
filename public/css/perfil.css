@@ -109,6 +109,8 @@ div.logo a h1 {
 
 .barra-de-navegacao .opcao-menu img {
     width: 48px;
+    height: 48px;
+    object-fit: cover;
     cursor: pointer;
     border-radius: 50%;
 }
@@ -169,6 +171,9 @@ div.logo a h1 {
 
 .container-foto-perfil img {
     width: 159px;
+    height: 159px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .foto-perfil {
@@ -438,7 +443,9 @@ div.logo a h1 {
 
 .profile-img, .editar-perfil-img {
     width: 48px;
+    height: 48px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .info-usuario-a-postar h5 {
