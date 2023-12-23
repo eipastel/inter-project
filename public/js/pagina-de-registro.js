@@ -1,5 +1,5 @@
-// const API = `https://inter-project-d39u.onrender.com/`
-const API = `http://localhost:3000/`
+const API = `https://inter-project-d39u.onrender.com/`
+// const API = `http://localhost:3000/`
 
 // Assim que a página carrega, verifica se o usuário está logado
 document.addEventListener("DOMContentLoaded", async function() {
