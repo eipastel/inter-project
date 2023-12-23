@@ -18,6 +18,7 @@ async function criarTabela() {
           data_de_nascimento VARCHAR(10),
           usuario VARCHAR(50),
           email VARCHAR(255),
+          caminho_foto_perfil VARCHAR(255),
           criadoEm VARCHAR(30),
           senha VARCHAR(255),
           id_tipo_usuario INT DEFAULT 3
@@ -101,7 +102,7 @@ async function descobrirUsuarioLogado(theToken) {
 
     // Consulta informações do usuário pelo token
     const resultadoConsulta = await db`
-      SELECT id, nome, email, usuario, bio, id_tipo_usuario
+      SELECT id, nome, email, usuario, bio, id_tipo_usuario, caminho_foto_perfil
       FROM usuarios
       WHERE token = ${token}
     `;
@@ -119,13 +120,28 @@ async function descobrirUsuarioLogado(theToken) {
       nome: usuarioLogado.nome,
       email: usuarioLogado.email,
       usuario: usuarioLogado.usuario,
-      bio: usuarioLogado.bio
+      bio: usuarioLogado.bio,
+      caminho_foto_perfil: usuarioLogado.caminho_foto_perfil
     };
 
     return usuarioConvertido;
 
   } catch(error) {
-    // Tratamento de erros para requisição de usuário logado.
+    throw error
+  }
+}
+
+// Função para atualizar as informações do perfil
+async function atualizarPerfil({ id, caminhoFotoPerfil = '', nome, bio = '', usuario }) {
+  try {
+    await db`
+      UPDATE usuarios
+      SET caminho_foto_perfil = ${caminhoFotoPerfil}, nome = ${nome}, bio = ${bio}, usuario = ${usuario}
+      WHERE id = ${id};
+    `;
+    return { message: 'Perfil atualizado com sucesso!' };
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -135,5 +151,6 @@ module.exports = {
     criarTabela,
     logar,
     descobrirUsuarioLogado,
+    atualizarPerfil,
 
 };

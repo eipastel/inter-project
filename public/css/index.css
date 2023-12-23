@@ -354,7 +354,6 @@ div.logo a h1 {
 .container-cabecalho-modal {
     display: flex;
     align-items: center;
-    justify-content: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.315);
     z-index: 14;
 }
@@ -362,6 +361,11 @@ div.logo a h1 {
 .container-cabecalho-modal h4 {
     font-size: 1.8rem;
     padding: 1rem;
+}
+
+.caracteres-restantes {
+    font-size: .8rem;
+    font-weight: 600;
 }
   
 .fechar-modal {
@@ -426,7 +430,35 @@ div.logo a h1 {
     min-width: 400px;
     align-items: center;
     padding: .5rem 1rem;
+    justify-content: space-between;
+}
+
+.texto-verde {
+    color: rgb(50, 145, 50);
+}
+
+.texto-amarelo {
+    color: rgb(238, 185, 11);
+}
+
+.texto-vermelho {
+    color: rgb(211, 63, 63);
+}
+
+.texto-critico {
+    color: rgb(255, 0, 0);
+    font-weight: bolder;
+}
+
+.container-info-user {
+    display: flex;
+    width: 70%;
+    align-items: center;
     gap: .6rem;
+}
+
+.container-restante {
+    max-width: 70px;
 }
 
 .profile-img {

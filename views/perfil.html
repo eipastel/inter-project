@@ -7,7 +7,7 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/css/perfil.css">
 
     <title>Inter Project | Perfil</title>
@@ -51,7 +51,7 @@
 
         <div class="foto-perfil dropdown">
             <a class="opcao-menu">
-                <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de perfil do usuário" id="perfil-img">
+                <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de perfil do usuário" id="perfil-img" class="foto-perfil-dinamica">
             </a>
             <div class="conteudo-dropdown">
                 <a >Perfil</a>
@@ -68,21 +68,21 @@
     <!-- Container do Cabecalho do Perfil -->
     <div class="container-cabecalho-perfil">
       <div class="container-foto-perfil">
-        <img src="/img/foto-exemplo-perfil.jpg" class="foto-perfil" alt="Foto de perfil do usuário">
+        <img src="/img/foto-exemplo-perfil.jpg" class="foto-perfil foto-perfil-dinamica" alt="Foto de perfil do usuário">
       </div>
 
       <div class="container-info-usuario">
-        <h2 class="nome-usuario">[nome]</h2>
+        <h2 class="nome-usuario">Carregando...</h2>
         <div class="info-extra-usuario">
-          <p class="texto-info info-publicacoes"><span class="info-num">[qtnd]</span> [info]</p>
+          <p class="texto-info info-publicacoes"><span class="info-num">0</span> Publicações</p>
           <p class="texto-info"><span class="info-num">0</span> Seguidores</p>
           <p class="texto-info"><span class="info-num">0</span> Seguindo</p>
         </div>
-        <p class="bio-usuario"></p>
+        <p class="bio-usuario">Carregando...</p>
       </div>
 
       <div class="container-botao-editar">
-        <button class="botao-editar-perfil" onclick="editarPerfil();">Editar Perfil</button>
+        <button class="botao-editar-perfil" onclick="abrirModalEditarPerfil();">Editar Perfil</button>
       </div>
     </div>
 
@@ -122,7 +122,48 @@
               </div>
           </div>
       </div>
-  </div>
+    </div>
+
+        <!-- Modal para edição do perfil -->
+        <div class="container-modal-para-editar-perfil">
+          <div class="sub-container-modal-editar-perfil">
+              <span onclick="fecharModalEditarPerfil();" class="fechar-modal" id="botaoFecharModalEditarPerfil">&times;</span>
+              <div class="container-cabecalho-modal">
+                  <h4>Editar Perfil</h4>
+              </div>
+    
+              <div class="conteudo-modal-editar-perfil">
+                  <div class="container-criacao-atualizacao">
+                      <div class="container-img">
+                        <label for="input-imagem" style="cursor: pointer;">
+                          <img src="https://d4fa88007301615e0fa3206955ea3e14.cdn.bubble.io/f1637861083442x625866468720319700/State%3DDefault%2C%20Size%3DSmall.svg" alt="Ícone Trocar a Foto de Perfil" class="editar-perfil-img">
+                        </label>
+                        <input type="file" id="input-imagem" accept="image/*" style="display: none">
+                      </div>
+
+                      <div class="inputs-container">
+                        <div class="input-container">
+                          <label for="nome">Nome <span class="obrigatorio">*</span></label>
+                          <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="input-container">
+                          <label for="usuario">Usuário <span class="obrigatorio">*</span></label>
+                          <input type="text" id="usuario" name="usuario" required>
+                        </div>
+                        <div class="input-container">
+                          <label for="bio">Biografia</label>
+                          <input type="text" id="bio" name="bio">
+                        </div>
+                      </div>
+
+
+                      <div class="container-botao">
+                        <button onclick="salvarPerfil()" id="botao-salvar-perfil">Salvar</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
 
 </body>
 <script src="../js/perfil.js"></script>

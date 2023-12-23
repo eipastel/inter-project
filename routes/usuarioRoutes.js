@@ -26,4 +26,7 @@ router.get('/cadastro', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'pagina-de-registro.html'));
 });
 
+// Rota para atualizar o perfil
+router.put('/atualizar-perfil', usuarioController.atualizarPerfil);
+
 module.exports = router;

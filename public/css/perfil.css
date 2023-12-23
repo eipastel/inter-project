@@ -199,6 +199,7 @@ div.logo a h1 {
     font-weight: 400;
     font-size: 1.1rem;
     max-width: 400px;
+    margin-top: 0.2rem;
 }
 
 .botao-editar-perfil {
@@ -238,7 +239,6 @@ div.logo a h1 {
     background-color: rgb(255, 255, 255);
     box-shadow: rgba(6, 19, 36, 0.2) 0px 1px 4px 0px;
     border-radius: 10px;
-    border: 1px solid var(--azul);
 }
 
 .cabecalho-da-atualizacao {
@@ -315,7 +315,7 @@ div.logo a h1 {
 }
 
 /* Modal para criar um post */
-.container-modal-para-postar {
+.container-modal-para-postar, .container-modal-para-editar-perfil {
     display: none;
     position: fixed;
     top: 0;
@@ -326,7 +326,7 @@ div.logo a h1 {
     z-index: 13;
 }
   
-.sub-container-modal {
+.sub-container-modal, .sub-container-modal-editar-perfil {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -359,7 +359,7 @@ div.logo a h1 {
     right: .7rem;
 }
   
-.conteudo-modal {
+.conteudo-modal, .conteudo-modal-editar-perfil {
     display: flex;
     width: 100%;
 }
@@ -416,7 +416,7 @@ div.logo a h1 {
     gap: .6rem;
 }
 
-.profile-img {
+.profile-img, .editar-perfil-img {
     width: 48px;
     border-radius: 50%;
 }
@@ -476,7 +476,7 @@ div.logo a h1 {
     cursor: pointer;
 }
 
-#botao-postar-atualizacao {
+#botao-postar-atualizacao, #botao-salvar-perfil {
     font-family: 'Sora', sans-serif;
     font-size: 1.3rem;
     font-weight: 500;
@@ -512,4 +512,61 @@ div.logo a h1 {
     width: 0;
     background-color: var(--azul);
     transition: width 0.3s ease;
+}
+
+/* Modal para editar perfil */
+.sub-container-modal-editar-perfil {
+    width: 400px;
+}
+
+.editar-perfil-img {
+    margin-top: 1.5rem;
+    width: 100px;
+    cursor: pointer;
+}
+
+.container-cabecalho-modal {
+    border: 1px solid rgba(128, 128, 128, 0.308);
+}
+
+.inputs-container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.input-container input {
+    border: 1px solid var(--azul-de-fundo);
+    outline: none;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    font-family: 'Sora', sans-serif;
+    opacity: .3;
+    width: 100%;
+}
+
+.input-container input:focus {
+    opacity: 1;
+    border: 1px solid var(--azul);
+}
+
+.input-container label {
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.container-botao {
+    margin: 1.5rem 0;
+    width: 80%;
+}
+
+.obrigatorio {
+    color: rgb(255, 42, 42);
 }

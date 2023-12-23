@@ -51,7 +51,7 @@
 
             <div class="foto-perfil dropdown">
                 <a class="opcao-menu">
-                    <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de perfil do usuário" id="perfil-img">
+                    <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de perfil do usuário" id="perfil-img" class="foto-perfil-dinamica">
                 </a>
                 <div class="conteudo-dropdown">
                     <a href="/perfil">Perfil</a>
@@ -84,8 +84,13 @@
                 </div>
                 <div class="container-criacao-atualizacao">
                     <div class="info-usuario-a-postar">
-                        <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de Perfil" class="profile-img">
-                        <h5 id="nome-do-usuario-a-postar">Nome do Usuário</h5>
+                        <div class="container-info-user">
+                            <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de Perfil" class="profile-img">
+                            <h5 id="nome-do-usuario-a-postar">Nome do Usuário</h5>
+                        </div>
+                        <div class="container-restante">
+                            <p class="caracteres-restantes">Restantes: <span class="texto-verde">300</span></p>
+                        </div>
                     </div>
                     <textarea maxlength="300" id="conteudo-da-atualizacao-a-postar" placeholder="Digite sua atualização..."></textarea>
                     <div class="extras-do-novo-post">

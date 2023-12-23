@@ -7,7 +7,8 @@ async function obterInformacoesUsuario(idUsuarioLogado) {
         SELECT
             usuarios.id AS id,
             usuarios.nome AS nome,
-            usuarios.bio AS bio
+            usuarios.bio AS bio,
+            usuarios.caminho_foto_perfil AS caminho_foto_perfil
         FROM usuarios
         WHERE usuarios.id = ${idUsuarioLogado}
         LIMIT 1
@@ -29,10 +30,11 @@ async function obterInformacoesUsuario(idUsuarioLogado) {
           UsuarioInfo.id AS id,
           UsuarioInfo.nome AS nome,
           UsuarioInfo.bio AS bio,
+          UsuarioInfo.caminho_foto_perfil AS caminho_foto_perfil,
           JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT('id', Publicacoes.id, 'mensagemnovaatt', Publicacoes.mensagemnovaatt, 'criadoem', Publicacoes.criadoem, 'curtidas', Publicacoes.curtidas, 'comentarios', Publicacoes.comentarios)) AS publicacoes
       FROM UsuarioInfo
       LEFT JOIN Publicacoes ON true
-      GROUP BY UsuarioInfo.id, UsuarioInfo.nome, UsuarioInfo.bio;
+      GROUP BY UsuarioInfo.id, UsuarioInfo.nome, UsuarioInfo.bio, UsuarioInfo.caminho_foto_perfil;
     `;
 
     return consultaUsuario;

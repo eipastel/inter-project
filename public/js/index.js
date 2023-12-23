@@ -6,6 +6,22 @@ const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
 const barraProgresso = document.getElementById('progresso');
 
+document.getElementById('conteudo-da-atualizacao-a-postar').addEventListener('input', () => {
+    let quantidadeMaximaCaracteres = 300
+    let inputPostar = document.getElementById('conteudo-da-atualizacao-a-postar');
+    let caracteresRestantesValor = quantidadeMaximaCaracteres - inputPostar.value.length
+    let caracteresRestantes = document.querySelector('.caracteres-restantes');
+    if(caracteresRestantesValor >= 200) {
+        caracteresRestantes.innerHTML = `<p class="caracteres-restantes">Restantes: <span class="texto-verde">${caracteresRestantesValor}</span></p>`;
+    } else if(caracteresRestantesValor >= 100) {
+        caracteresRestantes.innerHTML = `<p class="caracteres-restantes">Restantes: <span class="texto-amarelo">${caracteresRestantesValor}</span></p>`;
+    } else if(caracteresRestantesValor >= 31){
+        caracteresRestantes.innerHTML = `<p class="caracteres-restantes">Restantes: <span class="texto-vermelho">${caracteresRestantesValor}</span></p>`;
+    } else {
+        caracteresRestantes.innerHTML = `<p class="caracteres-restantes">Restantes: <span class="texto-critico">${caracteresRestantesValor}</span></p>`;
+    }
+});
+
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
@@ -15,10 +31,12 @@ document.addEventListener("DOMContentLoaded", async function() {
     window.addEventListener('scroll', verificarScroll);
     
     // Caso o usuário esteja logado, trocando as informações.
+    console.log(usuarioLogado)
     if(usuarioLogado) {
         // Trocando as informações necessárias do usuário logado
         let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
-        nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${usuarioLogado.nome}</h5>`
+        nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${formatarNomeCompleto(usuarioLogado.nome)}</h5>`
+        let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
 
         if(usuarioLogado.tipoUsuario === 1) {
             // Condições para o usuário administrador
@@ -32,6 +50,15 @@ document.addEventListener("DOMContentLoaded", async function() {
             // Condições para o usuário verificado
             tipoUsuario = "Verificado"
         }
+
+        console.log(usuarioLogado.caminho_foto_perfil)
+
+        fotosPerfil.forEach(fotoPerfil => {
+            fotoPerfil.src = usuarioLogado.caminho_foto_perfil;
+        });
+
+
+
     } else {
         window.location.href = "/login";
         return;
@@ -206,7 +233,8 @@ async function descobrirUsuarioLogado() {
                 email: informacao.email,
                 usuario: informacao.usuario,
                 id: informacao.id,
-                tipoUsuario: informacao.tipoUsuario
+                tipoUsuario: informacao.tipoUsuario,
+                caminho_foto_perfil: informacao.caminho_foto_perfil
             };
             return usuarioLogado;
         }

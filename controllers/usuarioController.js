@@ -47,6 +47,7 @@ async function logar(req, res) {
   }
 }
 
+// Função para descobrir usuário logado
 async function descobrirUsuarioLogado(req, res) {
   try {
     const token = req.headers.authorization;
@@ -64,11 +65,24 @@ async function descobrirUsuarioLogado(req, res) {
   }
 }
 
+// Função para atualizar as informações do perfil
+async function atualizarPerfil(req, res, next) {
+  try {
+    const { id, caminhoFotoPerfil, nome, bio, usuario } = req.body;
+    const resultadoAtualizacao = await usuarioModel.atualizarPerfil({ id, caminhoFotoPerfil, nome, bio, usuario });
+
+    res.json(resultadoAtualizacao);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
     // Funções exportadas:
     criarTabela,
     cadastrarUsuario,
     logar,
     descobrirUsuarioLogado,
+    atualizarPerfil,
 
 };

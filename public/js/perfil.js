@@ -1,8 +1,12 @@
-// Variáveis iniciais
-let tipoUsuario;
 const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
+
+// Variáveis iniciais
+let tipoUsuario, fotoSelecionada;
 const barraProgresso = document.getElementById('progresso');
+const inputImagem = document.getElementById('input-imagem');
+const imgFotoPerfil = document.querySelector('.editar-perfil-img');
+const uploadUrl = 'http://localhost:3000/upload-image';
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
@@ -12,6 +16,11 @@ document.addEventListener("DOMContentLoaded", async function() {
         let nomeUsuario = document.querySelector('.nome-usuario');
         let bioUsuario = document.querySelector('.bio-usuario');
         let infoPublicacoes = document.querySelector('.info-publicacoes');
+        let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
+
+        let nome = document.getElementById('nome');
+        let usuario = document.getElementById('usuario');
+        let bio = document.getElementById('bio');
 
         const usuarioLogado = await descobrirUsuarioLogado();
         simularCarregamento(150);
@@ -31,14 +40,22 @@ document.addEventListener("DOMContentLoaded", async function() {
                 tipoUsuario = "Verificado"
             }
 
+
             // Obtendo informações detalhadas do perfil do usuário
             const informacoesUsuario = await obterInformacoesUsuario(usuarioLogado.id);
             const perfilDoUsuario = informacoesUsuario[0];
             // Trocando as informações necessárias
             nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${usuarioLogado.nome}</h5>`
             nomeUsuario.innerHTML = `<h2 class="nome-usuario">${perfilDoUsuario.nome}</h2>`;
-            bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bioUsuario ? perfilDoUsuario.bioUsuario : ''}</p>`;
+            bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}</p>`;
             infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
+            fotosPerfil.forEach(fotoPerfil => {
+                fotoPerfil.src = perfilDoUsuario.caminho_foto_perfil;
+            });
+
+            nome.value = `${perfilDoUsuario.nome}`
+            usuario.value = `${usuarioLogado.usuario}`
+            bio.value = `${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}`
 
             renderizarPostagens(perfilDoUsuario);
             // Parando de mostrar o carregamento
@@ -103,19 +120,149 @@ async function abrirModalPost() {
     modalCriacaoPost.style.display = "block"
 };
 
+// Função para selecionar a foto
+function selecionarFoto() {
+    fotoSelecionada = '';
+}
+
+// Evento para quando selecionar a imagem
+// Evento para quando selecionar a imagem
+inputImagem.addEventListener('change', async function () {
+    try {
+        if (this.files.length > 0) {
+            const imagem = this.files[0];
+
+            const formData = new FormData();
+            formData.append('image', imagem);
+
+            const respostaUpload = await fetch('/upload-image', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (respostaUpload.ok) {
+                const respostaJson = await respostaUpload.json();
+
+                // Verifique se a resposta inclui a propriedade 'image'
+                if (respostaJson.image && respostaJson.image.url) {
+                    const linkDaImagem = respostaJson.image.url;
+                    imgFotoPerfil.src = linkDaImagem;
+                    fotoSelecionada = linkDaImagem;
+                } else {
+                    console.error('Erro ao obter o link da imagem:', respostaJson);
+                }
+            } else {
+                console.error('Erro ao fazer upload da imagem:', respostaUpload.status);
+            }
+        }
+    } catch (erro) {
+        console.error('Erro ao processar a imagem:', erro);
+    }
+});
+
+
+// Função para salvar as informações do perfil
+async function salvarPerfil() {
+    try {
+        let nomeValido = false;
+        let usuarioValido = false;
+        let nome = document.getElementById('nome').value;
+        let usuario = document.getElementById('usuario').value;
+        let bio = document.getElementById('bio').value;
+        let caminhoFotoPerfil = fotoSelecionada ? fotoSelecionada : '/img/foto-exemplo-perfil.png';
+
+        // Bloqueando botão salvar enquanto faz as operações
+        const botaoSalvar = document.getElementById('botao-salvar-perfil');
+        botaoSalvar.disabled = true
+
+        // Obtendo o token da localStorage
+        let tokenUsuarioLogado = localStorage.getItem('jwtToken');
+
+        // Verificando se o token existe
+        if (!tokenUsuarioLogado) {
+            return null;
+        }
+
+        if(nome.length > 2 && !temNumero(nome) && !temEmoji(nome)) {
+            nomeValido = true;
+        } else {
+            nomeValido = false;
+        }
+
+        if(usuario.length < 3 || temEspacos(usuario) || temEmoji(usuario)) {
+            usuarioValido = false;
+        } else {
+            usuarioValido = true;
+        }
+
+        const usuarioLogado = await descobrirUsuarioLogado();
+
+        if(nomeValido && usuarioValido) {
+            const response = await fetch('/atualizar-perfil', {
+            
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': tokenUsuarioLogado
+                },
+                body: JSON.stringify({
+                    id: usuarioLogado.id,
+                    nome,
+                    usuario,
+                    bio,
+                    caminhoFotoPerfil
+                })
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                alert(data.message);
+                fecharModalEditarPerfil();
+                botaoSalvar.disabled = false
+                window.location.href = `/perfil`
+            } else {
+                alert('Erro ao salvar perfil: ' + data.error);
+            }
+        } else {
+            alert("Campo(s) inválido(s)!")
+        }
+        
+    } catch (error) {
+        console.error('Erro ao salvar perfil:', error);
+    }
+}
+
+// Função para abrir o modal de editar perfil
+async function abrirModalEditarPerfil() {
+    if(!localStorage.getItem('jwtToken')) {
+        alert("Você não está logado!")
+        return;
+    };
+
+    const modalCriacaoPost = document.querySelector('.container-modal-para-editar-perfil');
+    modalCriacaoPost.style.display = "block"
+};
+
 // Função para fechar modal de criar novo post
 function fecharModalPost() {
     const modalCriacaoPost = document.querySelector('.container-modal-para-postar');
     modalCriacaoPost.style.display = "none"
 }
 
+// Função para fechar modal de criar novo post
+function fecharModalEditarPerfil() {
+    const modalEditarPerfil = document.querySelector('.container-modal-para-editar-perfil');
+    modalEditarPerfil.style.display = "none"
+}
+
 // Função para descobrir usuário logado
 async function descobrirUsuarioLogado() {
     try {
-        // Obtenha o token da localStorage
+        // Obtendo o token da localStorage
         let tokenUsuarioLogado = localStorage.getItem('jwtToken');
 
-        // Verifique se o token existe
+        // Verificando se o token existe
         if (!tokenUsuarioLogado) {
             return null;
         }
@@ -129,9 +276,8 @@ async function descobrirUsuarioLogado() {
             },
         });
 
-        console.log(tokenUsuarioLogado)
 
-        // Verifique se a resposta é bem-sucedida (status 200)
+        // Verificando se a resposta é bem-sucedida (status 200)
         if (!response.ok) {
             console.log("Erro na requisição:", response.status);
             return null;
@@ -140,7 +286,7 @@ async function descobrirUsuarioLogado() {
         // Parse da resposta JSON
         const informacao = await response.json();
 
-        // Verifique se há um erro na resposta
+        // Verificando se há um erro na resposta
         if (informacao.error) {
             console.log("Erro não identificado: ", informacao.error);
             return null;
@@ -307,4 +453,20 @@ function criarContainerComentarios(arrayComentarios, idPostagem) {
         // Tratativa para caso não hajam comentários
     }
     return containerComentarios;
+}
+
+// Função para verificar se uma string contém emojis
+function temEmoji(string) {
+    const regexEmoji = /[\p{Emoji}]/gu;
+    return regexEmoji.test(string);
+}
+
+function temNumero(string) {
+    const regex = /[0-9]/;
+    return regex.test(string);
+}
+
+function temEspacos(string) {
+    const regex = /\s/g;
+    return regex.test(string);
 }
