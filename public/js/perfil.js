@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         let bioUsuario = document.querySelector('.bio-usuario');
         let infoPublicacoes = document.querySelector('.info-publicacoes');
         let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
+        let fotosPerfilCabecalhoDoUsuarioLogado = document.querySelector('.foto-usuario-logado');
+        let botaoEditarPerfil = document.querySelector('.botao-editar-perfil');
+        let botaoSeguir = document.querySelector('.botao-seguir-usuario');
+        let botaoCarregando = document.querySelector('.botao-padrao');
 
         let nome = document.getElementById('nome');
         let usuario = document.getElementById('usuario');
@@ -27,6 +31,29 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         // Caso o usuário esteja logado, trocando as informações
         if (usuarioLogado) {
+            let perfilDoUsuario;
+
+            // Verificando de quem é o perfil e trocando as informações com base nisso
+            const nomeUsuarioNaURL = perfilDeQuem();
+
+            if(nomeUsuarioNaURL === usuarioLogado.usuario || nomeUsuarioNaURL == 'perfil') {
+                // Obtendo informações detalhadas do perfil do usuário
+                const informacoesUsuario = await obterInformacoesUsuario(usuarioLogado.id);
+                perfilDoUsuario = informacoesUsuario[0];
+                botaoEditarPerfil.style.display = "block"
+                botaoCarregando.style.display = "none"
+            } else {
+                // Obtendo informações detalhadas do perfil do usuário na URL
+                const informacoesUsuarioNaURL = await obterInformacoesPeloUsuario(nomeUsuarioNaURL);
+                if (!informacoesUsuarioNaURL) {
+                    // Lógica para lidar com o usuário não encontrado
+                    return;
+                }
+                perfilDoUsuario = informacoesUsuarioNaURL[0];
+                botaoSeguir.style.display = "block"
+                botaoCarregando.style.display = "none"
+            }
+
             if (usuarioLogado.tipoUsuario === 1) {
                 // Condições para o usuário administrador
                 tipoUsuario = "Administrador"
@@ -40,19 +67,16 @@ document.addEventListener("DOMContentLoaded", async function() {
                 tipoUsuario = "Verificado"
             }
 
-
-            // Obtendo informações detalhadas do perfil do usuário
-            const informacoesUsuario = await obterInformacoesUsuario(usuarioLogado.id);
-            const perfilDoUsuario = informacoesUsuario[0];
             // Trocando as informações necessárias
             nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${usuarioLogado.nome}</h5>`
             nomeUsuario.innerHTML = `<h2 class="nome-usuario">${perfilDoUsuario.nome}</h2>`;
             bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}</p>`;
-            infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
+            infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes[0].id === null ? 0 : perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
             fotosPerfil.forEach(fotoPerfil => {
-                fotoPerfil.src = perfilDoUsuario.caminho_foto_perfil;
+                fotoPerfil.src = perfilDoUsuario.caminho_foto_perfil ? perfilDoUsuario.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg';
             });
-
+            fotosPerfilCabecalhoDoUsuarioLogado.src = `${usuarioLogado.caminhofotoperfil ? usuarioLogado.caminhofotoperfil : '/img/foto-exemplo-perfil.jpg'}`;
+            
             nome.value = `${perfilDoUsuario.nome}`
             usuario.value = `${usuarioLogado.usuario}`
             bio.value = `${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}`
@@ -72,6 +96,11 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 // Funções utilitárias
 
+// Função para seguir um usuário
+function seguirUsuario() {
+    alert("Essa funcionalidade ainda não está disponível!")
+}
+
 // Função para simular o carregamento
 function simularCarregamento(progresso) {
     barraProgresso.style.width = progresso + '%';
@@ -81,6 +110,23 @@ function simularCarregamento(progresso) {
 async function obterInformacoesUsuario(idUsuario) {
     try {
         const response = await fetch(`${API}usuario/${idUsuario}`);
+        if (!response.ok) {
+            console.log("Erro na requisição:", response.status);
+            return null;
+        }
+
+        const informacoesUsuario = await response.json();
+        return informacoesUsuario;
+    } catch (error) {
+        console.error('Erro ao obter informações do usuário:', error);
+        return null;
+    }
+}
+
+// Função para obter id do usuário da URL
+async function obterInformacoesPeloUsuario(usuario) {
+    try {
+        const response = await fetch(`${API}usuarioperfil/${usuario}`);
         if (!response.ok) {
             console.log("Erro na requisição:", response.status);
             return null;
@@ -276,7 +322,6 @@ async function descobrirUsuarioLogado() {
             },
         });
 
-
         // Verificando se a resposta é bem-sucedida (status 200)
         if (!response.ok) {
             console.log("Erro na requisição:", response.status);
@@ -297,7 +342,8 @@ async function descobrirUsuarioLogado() {
                 email: informacao.email,
                 usuario: informacao.usuario,
                 id: informacao.id,
-                tipoUsuario: informacao.tipoUsuario
+                tipoUsuario: informacao.tipoUsuario,
+                caminhofotoperfil: informacao.caminho_foto_perfil
             };
             return usuarioLogado;
         }
@@ -325,35 +371,40 @@ function dataFormatada(data) {
 // Função para carregar e exibir postagens
 function renderizarPostagens(usuario) {
     let postagens = usuario.publicacoes
-    const todasAtualizacoes = document.querySelector('.container-publicacoes');
-    todasAtualizacoes.innerHTML = '';
-
-    postagens.forEach(postagem => {
-        const idPostagem = postagem.id;
-        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem));
-        const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
-        const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
-        const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
-
-        const divMaior = document.createElement("div");
-        const novaDiv = document.createElement("div");
-        novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
-        novaDiv.innerHTML = `
-            ${cabecalhoDaAtualizacao.outerHTML}
-            ${conteudoAtualizacao.outerHTML}
-            <div class="container-extras">
-                ${infoAcoesExtras.outerHTML}
-                ${containerComentarios.outerHTML}
-            </div>
-        `;
-
-        divMaior.innerHTML = `
-                ${novaDiv.outerHTML}
-        `;
-
-        // Adiciona a nova postagem no final da lista
-        todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
-    });
+    if(postagens[0].id === null) {
+        const todasAtualizacoes = document.querySelector('.container-publicacoes');
+        todasAtualizacoes.innerHTML = '<h3 class="sem-publicacoes">Usuário não tem publicações</>';
+    } else {
+        const todasAtualizacoes = document.querySelector('.container-publicacoes');
+        todasAtualizacoes.innerHTML = '';
+    
+        postagens.forEach(postagem => {
+            const idPostagem = postagem.id;
+            const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem));
+            const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
+            const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
+            const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
+    
+            const divMaior = document.createElement("div");
+            const novaDiv = document.createElement("div");
+            novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
+            novaDiv.innerHTML = `
+                ${cabecalhoDaAtualizacao.outerHTML}
+                ${conteudoAtualizacao.outerHTML}
+                <div class="container-extras">
+                    ${infoAcoesExtras.outerHTML}
+                    ${containerComentarios.outerHTML}
+                </div>
+            `;
+    
+            divMaior.innerHTML = `
+                    ${novaDiv.outerHTML}
+            `;
+    
+            // Adiciona a nova postagem no final da lista
+            todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
+        });
+    }
     
     // Parando de mostrar o carregamento
     barraProgresso.style.display = 'none';

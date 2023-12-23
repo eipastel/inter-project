@@ -1,5 +1,6 @@
 const db = require('../config/dbConfig.js');
 
+// Função para conseguir as informações pelo "ID"
 async function obterInformacoesUsuario(idUsuarioLogado) {
   try {
     let consultaUsuario = await db`
@@ -43,8 +44,20 @@ async function obterInformacoesUsuario(idUsuarioLogado) {
   }
 }
 
+// Função para conseguir as informações pelo "ID"
+async function obterInformacoesPeloUsuario(usuario) {
+  try {
+    let idUsuario = await db`
+      SELECT id FROM usuarios
+      WHERE usuario = ${usuario};
+    `;
+    return await obterInformacoesUsuario(idUsuario[0].id);
+  } catch(error) {
+    throw error
+  }
+}
 module.exports = {
   obterInformacoesUsuario,
-  
+  obterInformacoesPeloUsuario,
   
 };

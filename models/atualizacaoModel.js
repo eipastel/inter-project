@@ -79,24 +79,25 @@ async function carregarPostagens(offset) {
       atualizacoes.id AS id,
       atualizacoes.mensagemNovaAtt AS mensagemnovaatt,
       usuarios.usuario AS usuario,
+      usuarios.caminho_foto_perfil AS caminhofotoperfil,
       (
-          SELECT nome
-          FROM usuarios
-          WHERE usuarios.id = atualizacoes.id_usuario
-          LIMIT 1
+        SELECT nome
+        FROM usuarios
+        WHERE usuarios.id = atualizacoes.id_usuario
+        LIMIT 1
       ) AS nomeusuario,
       atualizacoes.criadoEm AS criadoem,
       ARRAY_AGG(DISTINCT (
-          SELECT JSON_BUILD_OBJECT('id', curtidas.id, 'idusuario', curtidas.id_usuario)::TEXT
+        SELECT JSON_BUILD_OBJECT('id', curtidas.id, 'idusuario', curtidas.id_usuario)::TEXT
       )) AS curtidas,
       ARRAY_AGG(DISTINCT (
-          SELECT JSON_BUILD_OBJECT('id', comentarios.id, 'nomeusuario', (SELECT nome FROM usuarios WHERE usuarios.id = comentarios.id_usuario LIMIT 1), 'comentario', comentarios.comentario)::TEXT
+        SELECT JSON_BUILD_OBJECT('id', comentarios.id, 'nomeusuario', (SELECT nome FROM usuarios WHERE usuarios.id = comentarios.id_usuario LIMIT 1), 'comentario', comentarios.comentario)::TEXT
       )) AS comentarios
       FROM atualizacoes
       LEFT JOIN usuarios ON atualizacoes.id_usuario = usuarios.id
       LEFT JOIN curtidas ON atualizacoes.id = curtidas.id_postagem
       LEFT JOIN comentarios ON atualizacoes.id = comentarios.id_postagem
-      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario
+      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario, usuarios.caminho_foto_perfil
       ORDER BY atualizacoes.id DESC
       LIMIT ${limit} OFFSET ${offset};
     `;

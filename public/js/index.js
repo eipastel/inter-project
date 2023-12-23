@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     window.addEventListener('scroll', verificarScroll);
     
     // Caso o usuário esteja logado, trocando as informações.
-    console.log(usuarioLogado)
     if(usuarioLogado) {
         // Trocando as informações necessárias do usuário logado
         let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
@@ -51,14 +50,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             tipoUsuario = "Verificado"
         }
 
-        console.log(usuarioLogado.caminho_foto_perfil)
-
         fotosPerfil.forEach(fotoPerfil => {
-            fotoPerfil.src = usuarioLogado.caminho_foto_perfil;
+            fotoPerfil.src = usuarioLogado.caminho_foto_perfil ? usuarioLogado.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg';
         });
-
-
-
     } else {
         window.location.href = "/login";
         return;
@@ -244,10 +238,17 @@ async function descobrirUsuarioLogado() {
     }
 };
 
-// Função para redirecionar para perfil específico
-function irParaPerfil(usuario) {
-    window.location.href = `/perfil/${usuario}`;
-};
+// Função para abrir o perfil ao clicar em um usuário
+function abrirPerfilAoClicar(usuario, usuarioLogado) {
+    // Lógica para determinar se o usuário está visualizando o próprio perfil ou o de outro usuário
+    if (usuario === usuarioLogado) {
+        // Se for o próprio perfil, redirecione para a rota do perfil
+        window.location.href = "/perfil";
+    } else {
+        // Se for o perfil de outro usuário, abra o perfil desse usuário
+        window.location.href = `/perfil/${usuario}`;
+    }
+}
 
 // Função para excluir uma atualização
 async function excluirPostagem(idPostagem) {
@@ -461,7 +462,7 @@ async function renderizarPostagens(postagens, segredo) {
     // Adiciona as novas postagens ao final da lista
     postagens.forEach(postagem => {
         const idPostagem = postagem.id;
-        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem), postagem.usuario);
+        const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem), postagem.usuario, postagem.caminhofotoperfil, usuarioLogado.usuario);
         const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
         const acoesExtras = criarAcoesExtras(idPostagem, postagem.curtidas, idUsuarioLogado);
         const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
@@ -500,17 +501,17 @@ async function renderizarPostagens(postagens, segredo) {
 }
 
 // Função para criar o cabeçalho da atualização
-function criarCabecalhoAtualizacao(nomeUsuario, criadoEm, usuario) {
+function criarCabecalhoAtualizacao(nomeUsuario, criadoEm, usuario, caminhofotoperfil, usuarioLogado) {
     const cabecalhoDaAtualizacao = document.createElement("div");
     cabecalhoDaAtualizacao.classList.add("cabecalho-da-atualizacao");
 
     const imagemCabecalho = document.createElement("div");
     imagemCabecalho.classList.add("imagem-cabecalho");
-    imagemCabecalho.innerHTML = `<img src="/img/foto-exemplo-perfil.jpg" alt="Foto usuário da postagem">`;
+    imagemCabecalho.innerHTML = `<img src="${caminhofotoperfil ? caminhofotoperfil : '/img/foto-exemplo-perfil.jpg'}" alt="Foto usuário da postagem">`;
 
     const textosCabecalho = document.createElement("div");
     textosCabecalho.classList.add("textos-cabecalho");
-    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${usuario}');">${formatarNomeCompleto(nomeUsuario)} <span class="cabecalho-usuario">@${usuario}</span></h2><p>${criadoEm}</p>`;
+    textosCabecalho.innerHTML = `<h2 onclick="abrirPerfilAoClicar('${usuario}', '${usuarioLogado}')");">${formatarNomeCompleto(nomeUsuario)} <span class="cabecalho-usuario">@${usuario}</span></h2><p>${criadoEm}</p>`;
 
     cabecalhoDaAtualizacao.appendChild(imagemCabecalho);
     cabecalhoDaAtualizacao.appendChild(textosCabecalho);

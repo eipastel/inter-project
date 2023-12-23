@@ -93,8 +93,8 @@ document.querySelector('.botao-de-registro').addEventListener('click', (evento) 
                 },
                 body: JSON.stringify({
                     nome: nome,
-                    usuario: usuario,
-                    email: email,
+                    usuario: usuario.toLowerCase(),
+                    email: email.toLowerCase(),
                     senha: senha,
                     criadoEm: criadoEm,
                 }),

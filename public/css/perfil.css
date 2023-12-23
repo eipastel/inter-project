@@ -202,7 +202,8 @@ div.logo a h1 {
     margin-top: 0.2rem;
 }
 
-.botao-editar-perfil {
+.botao-editar-perfil, .botao-seguir-usuario, .botao-padrao {
+    display: none;
     text-align: center;
     border: 1px solid black;
     outline: none;
@@ -214,8 +215,12 @@ div.logo a h1 {
     transition: all .1s;
 }
 
-.botao-editar-perfil:hover {
+.botao-editar-perfil:hover, .botao-seguir-usuario:hover, .botao-padrao:hover {
     background-color: rgba(238, 238, 238, 0.89);
+}
+
+.botao-padrao {
+    display: block;
 }
 
 .divisor {
@@ -312,6 +317,13 @@ div.logo a h1 {
 
 .comentario-curtido {
     color: rgb(255, 74, 74);
+}
+
+/* Caso usuário não tenha publicações */
+.sem-publicacoes {
+    text-align: center;
+    color: #00000085;
+    font-size: 1rem;
 }
 
 /* Modal para criar um post */
