@@ -380,7 +380,7 @@ function renderizarPostagens(usuario) {
     
         postagens.forEach(postagem => {
             const idPostagem = postagem.id;
-            const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem));
+            const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem), idPostagem);
             const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
             const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
             const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
@@ -411,13 +411,13 @@ function renderizarPostagens(usuario) {
 }
 
 // Função para criar o cabeçalho da atualização
-function criarCabecalhoAtualizacao(criadoEm) {
+function criarCabecalhoAtualizacao(criadoEm, idPostagem) {
     const cabecalhoDaAtualizacao = document.createElement("div");
     cabecalhoDaAtualizacao.classList.add("cabecalho-da-atualizacao");
 
     const textosCabecalho = document.createElement("div");
     textosCabecalho.classList.add("textos-cabecalho");
-    textosCabecalho.innerHTML = `<p>${criadoEm}</p>`;
+    textosCabecalho.innerHTML = `<h3>#${idPostagem}</h3><p>${criadoEm}</p>`;
 
     cabecalhoDaAtualizacao.appendChild(textosCabecalho);
 

@@ -28,7 +28,6 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    margin: 0;
 }
 
 /* Cabeçalho */
@@ -168,8 +167,11 @@ div.logo a h1 {
     padding: 1rem;
 }
 
-.foto-perfil {
+.container-foto-perfil img {
     width: 159px;
+}
+
+.foto-perfil {
     border-radius: 50%;
 }
 
@@ -253,6 +255,12 @@ div.logo a h1 {
     padding: 1rem 1rem 0 1rem;
 }
 
+.textos-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
 .textos-cabecalho p {
     font-size: .8rem;
     color: rgba(128, 128, 128, 0.781);
@@ -262,7 +270,7 @@ div.logo a h1 {
 .conteudo-atualizacao {
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid rgba(88, 88, 88, 0.164);
+    border-bottom: 1px solid rgba(88, 88, 88, 0.068);
 }
 
 .conteudo-atualizacao p {
@@ -581,4 +589,86 @@ div.logo a h1 {
 
 .obrigatorio {
     color: rgb(255, 42, 42);
+}
+
+/* Responsivo telas menores */
+@media (max-width: 950px) {
+    .barra-de-pesquisa {
+        display: none;
+    }
+
+    .sub-container-modal {
+        width: calc(100% - 20px);
+    }
+
+    .adicionar-imagem-ao-post {
+        display: none;
+    }
+
+    .container-cabecalho-perfil {
+        flex-direction: column;
+        align-items: left;
+        width: auto;
+        min-width: auto;
+    }
+
+    .container-botao-editar {
+        margin-top: 1.5rem;
+    }
+
+    .container-info-usuario {
+        display: flex;
+        align-items: center;
+    }
+
+    .divisor{
+        display: none;
+    }
+}
+
+@media (max-width: 580px) {
+    header {
+        padding: 1rem 0;
+        margin-bottom: .5rem;
+    }
+
+    div.logo a h1 {
+        font-size: 1.7rem;
+    }
+
+    .opcao-explorar, .opcao-notificacoes {
+        display: none;
+    }
+
+    .barra-de-navegacao .opcao-menu i{
+        font-size: 1.7rem;
+    }
+    
+    .container-da-atualizacao {
+        box-shadow: none;
+        border-radius: 0px;
+        width: 100%;
+    }
+
+    .container-comentar input {
+        font-size: 1.1rem;
+    }
+
+    .sub-container-modal-editar-perfil {
+        width: 100%;
+    }
+
+    .fechar-modal {
+        top: 8px;
+    }
+}
+
+@media (max-width: 420px) {
+    .logo {
+        display: none;
+    }
+
+    .info-seguindo, .info-seguidores {
+        display: none;
+    }
 }
