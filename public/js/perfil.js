@@ -6,7 +6,7 @@ let tipoUsuario, fotoSelecionada;
 const barraProgresso = document.getElementById('progresso');
 const inputImagem = document.getElementById('input-imagem');
 const imgFotoPerfil = document.querySelector('.editar-perfil-img');
-const uploadUrl = 'http://localhost:3000/upload-image';
+const uploadUrl = `${API}upload-image`;
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
@@ -215,7 +215,7 @@ async function salvarPerfil() {
         let nome = document.getElementById('nome').value;
         let usuario = document.getElementById('usuario').value;
         let bio = document.getElementById('bio').value;
-        let caminhoFotoPerfil = fotoSelecionada ? fotoSelecionada : '/img/foto-exemplo-perfil.png';
+        let caminhoFotoPerfil = fotoSelecionada ? fotoSelecionada : '/img/foto-exemplo-perfil.jpg';
 
         // Bloqueando botão salvar enquanto faz as operações
         const botaoSalvar = document.getElementById('botao-salvar-perfil');
