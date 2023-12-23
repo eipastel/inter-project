@@ -25,16 +25,24 @@ async function postar(req, res, next) {
 // Controller para ver postagens
 async function carregarPostagens(req, res) {
     try {
-        const postagensFormatadas = await atualizacaoModel.carregarPostagens();
+        // Recebe o número da página atual a partir dos parâmetros da solicitação (por padrão é a página 1)
+        const paginaAtual = req.query.pagina || 1;
+        const postagensPorPagina = 8;
 
-        if(!postagensFormatadas) {
+        // Calcule o offset com base no número da página
+        const offset = Math.max(0, (paginaAtual - 1) * postagensPorPagina);
+
+        const postagensFormatadas = await atualizacaoModel.carregarPostagens(offset);
+
+        if (!postagensFormatadas) {
             // Tratando se não encontrar nenhuma postagem
-            return
+            return res.status(404).json({ mensagem: 'Nenhuma postagem encontrada.' });
         }
 
         res.json({ postagensFormatadas });
-    } catch(error) {
-        console.error("Erro interno do servidor: ", error)
+    } catch (error) {
+        console.error("Erro interno do servidor: ", error);
+        res.status(500).json({ erro: 'Erro interno do servidor.' });
     }
 }
 

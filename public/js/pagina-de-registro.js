@@ -42,49 +42,39 @@ document.querySelector('.botao-de-registro').addEventListener('click', (evento) 
     let usuarioValido = false;
     let confirmacaoSenhaValida = false;
 
-    if(nome.length > 2 && !temNumero(nome)) {
+    if(nome.length > 2 && !temNumero(nome) && !temEmoji(nome)) {
         nomeValido = true;
-        nomeInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso o nome não esteja devidamente preenchido
         nomeValido = false;
-        nomeInput.classList.add("erro-ao-registrar");
     }
 
-    if(usuario.length < 3 || temEspacos(usuario)) {
+    if(usuario.length < 3 || temEspacos(usuario) || temEmoji(usuario)) {
         // Tratativa caso o usuário não esteja devidamente preenchido
         usuarioValido = false;
-        usuarioInput.classList.add("erro-ao-registrar");
     } else {
         usuarioValido = true;
-        usuarioInput.classList.remove("erro-ao-registrar");
     }
 
-    if(email.length >= 9) {
+    if(email.length >= 9 && !temEmoji(email)) {
        emailValido = true;
-       emailInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso o e-mail não esteja devidamente preenchido
         emailValido = false;
-        emailInput.classList.add("erro-ao-registrar");
     }
 
-    if(senha.length > 2) {
+    if(senha.length > 2 && !temEmoji(senha)) {
         senhaValida = true;
-        senhaInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso a senha não esteja devidamente preenchida
         senhaValida = false;
-        senhaInput.classList.add("erro-ao-registrar");
     }
 
     if(confirmacaoSenha === senha) {
         confirmacaoSenhaValida = true;
-        confirmacaoSenhaInput.classList.remove("erro-ao-registrar");
     } else {
         // Tratativa caso a confirmação de senha não esteja devidamente preenchida
         confirmacaoSenhaValida = false;
-        confirmacaoSenhaInput.classList.add("erro-ao-registrar");
     }
 
     // Se todos os campos forem válidos, criando o usuário
@@ -210,3 +200,9 @@ async function descobrirUsuarioLogado() {
         return null;
     }
 };
+
+// Função para verificar se uma string contém emojis
+function temEmoji(string) {
+    const regexEmoji = /[\p{Emoji}]/gu;
+    return regexEmoji.test(string);
+}

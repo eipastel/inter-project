@@ -1,5 +1,6 @@
 // Variáveis iniciais
 let tipoUsuario;
+let numeroPostagensCarregadas = 0;
 
 const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
@@ -9,7 +10,9 @@ const barraProgresso = document.getElementById('progresso');
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
     simularCarregamento(250);
-    carregarPostagens();
+    carregarPostagens(numeroPostagensCarregadas);
+
+    window.addEventListener('scroll', verificarScroll);
     
     // Caso o usuário esteja logado, trocando as informações.
     if(usuarioLogado) {
@@ -35,16 +38,45 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
-// Função para carregar e exibir postagens
-async function carregarPostagens() {
-    try {
-        // Buscar as últimas postagens do servidor
-        const response = await fetch(`${API}postagens`);
-        const data = await response.json();
-        const postagensDoServidor = data.postagensFormatadas;
+// Função para fazer o carregamento de mais publicações conforme o usuário scrolla
+async function verificarScroll() {
+    const alturaTotal = document.documentElement.scrollHeight;
+    const alturaJanela = window.innerHeight;
+    const posicaoAtual = window.scrollY;
 
-        // Renderizar as postagens no DOM
-        renderizarPostagens(postagensDoServidor);
+    // Verifica se o usuário rolou até o final da página
+    if (posicaoAtual + alturaJanela >= alturaTotal) {
+        // Atualiza o número de postagens carregadas
+        numeroPostagensCarregadas += 2;
+        // Carregue mais postagens do backend
+        const maisPostagensDisponiveis = await carregarPostagens(numeroPostagensCarregadas);
+
+        // Verifica se há mais postagens disponíveis
+        if (!maisPostagensDisponiveis) {
+            // Se não há mais postagens, remova o event listener para parar de verificar o scroll
+            window.removeEventListener('scroll', verificarScroll);
+        }
+    }
+}
+
+// Função para carregar e exibir postagens
+async function carregarPostagens(pagina) {
+    try {
+        let response
+        if(pagina == 6581) {
+            response = await fetch(`${API}postagens?pagina=0&random=${Math.random()}`);
+        } else {
+            response = await fetch(`${API}postagens?pagina=${pagina}&random=${Math.random()}`);
+        }
+        const data = await response.json();
+        const postagensDoServidor = data.postagensFormatadas.postagensFormatadas;
+
+        // Renderizar as novas postagens no DOM
+        renderizarPostagens(postagensDoServidor, pagina);
+        
+        // Verificar se há mais postagens disponíveis
+        const maisPostagensDisponiveis = data.postagensFormatadas.maisPostagensDisponiveis;
+        return maisPostagensDisponiveis;
     } catch (error) {
         console.error('Erro ao carregar postagens:', error);
     }
@@ -98,8 +130,7 @@ async function postar() {
 
         // Verificando se a postagem foi bem-sucedida antes de carregar as postagens
         if (response.ok) {
-            // Atualizando as postagens na tela
-            await carregarPostagens();
+            await carregarPostagens(6581);
         } else {
             console.error('Erro ao postar atualização:', response.status, response.statusText);
         }
@@ -390,11 +421,16 @@ function focarComentario(idPostagem) {
 }
 
 // Função para renderizar postagens no DOM
-async function renderizarPostagens(postagens) {
+async function renderizarPostagens(postagens, segredo) {
     const usuarioLogado = await descobrirUsuarioLogado();
     const idUsuarioLogado = usuarioLogado.id;
     const todasAtualizacoes = document.querySelector('.container-atualizacoes');
-    todasAtualizacoes.innerHTML = '';
+
+    if(segredo === 6581) {
+        todasAtualizacoes.innerHTML = `<main class="container-atualizacoes"></main>`;
+    }
+
+    // Adiciona as novas postagens ao final da lista
     postagens.forEach(postagem => {
         const idPostagem = postagem.id;
         const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem), postagem.usuario);
@@ -422,10 +458,15 @@ async function renderizarPostagens(postagens) {
                 ${novaDiv.outerHTML}
         `;
 
-        // Adiciona a nova postagem no final da lista
-        todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
+        // Adiciona a nova postagem abaixo das já existentes
+        const ultimaPostagem = todasAtualizacoes.lastChild;
+        if(ultimaPostagem.value == undefined) { 
+            todasAtualizacoes.appendChild(divMaior);
+        } else {
+            todasAtualizacoes.insertBefore(divMaior, ultimaPostagem.nextSibling);
+        }
     });
-    
+
     // Parando de mostrar o carregamento
     barraProgresso.style.display = 'none';
 }
@@ -441,7 +482,7 @@ function criarCabecalhoAtualizacao(nomeUsuario, criadoEm, usuario) {
 
     const textosCabecalho = document.createElement("div");
     textosCabecalho.classList.add("textos-cabecalho");
-    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${usuario}');">${nomeUsuario}</h2><p>${criadoEm}</p>`;
+    textosCabecalho.innerHTML = `<h2 onclick="irParaPerfil('${usuario}');">${formatarNomeCompleto(nomeUsuario)} <span class="cabecalho-usuario">@${usuario}</span></h2><p>${criadoEm}</p>`;
 
     cabecalhoDaAtualizacao.appendChild(imagemCabecalho);
     cabecalhoDaAtualizacao.appendChild(textosCabecalho);
@@ -577,3 +618,17 @@ function criarInfoAcoesExtras(idPostagem, comentarios, curtidas) {
 function simularCarregamento(progresso) {
     barraProgresso.style.width = progresso + '%';
 }
+
+function formatarNomeCompleto(nomeCompleto) {
+    // Divindo o nome completo em partes usando o espaço como delimitador
+    const partesNome = nomeCompleto.split(' ');
+  
+    // Obtendo o primeiro nome
+    const primeiroNome = partesNome[0];
+  
+    // Capitalizando apenas o primeiro caractere do primeiro nome
+    const primeiroNomeCapitalizado = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1);
+
+    // Se não houver mais partes, retorne apenas o primeiro nome capitalizado
+    return primeiroNomeCapitalizado;
+  }

@@ -190,6 +190,11 @@ div.logo a h1 {
     cursor: pointer;
 }
 
+.cabecalho-usuario {
+    font-size: .85rem;
+    color: var(--azul);
+}
+
 .textos-cabecalho p {
     font-size: .8rem;
     color: rgba(128, 128, 128, 0.781);

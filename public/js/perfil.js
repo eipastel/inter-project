@@ -40,7 +40,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bioUsuario ? perfilDoUsuario.bioUsuario : ''}</p>`;
             infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
 
-            renderizarPostagens(perfilDoUsuario)
+            renderizarPostagens(perfilDoUsuario);
+            // Parando de mostrar o carregamento
+            barraProgresso.style.display = 'none';
         } else {
             window.location.href = "/login";
             return;

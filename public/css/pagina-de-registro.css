@@ -198,7 +198,6 @@ body {
   color: var(--azul-de-fundo);
 }
 
-
 /* Responsivo telas menores */
 @media (max-width: 500px) {
   .container {
