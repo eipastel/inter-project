@@ -107,8 +107,10 @@ div.logo a h1 {
 
 .barra-de-navegacao .opcao-menu img {
     width: 50px;
+    height: 50px;
     cursor: pointer;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 /* Dropdown */
@@ -303,6 +305,8 @@ div.logo a h1 {
 
 .container-comentar img {
     width: 45px;
+    height: 45px;
+    object-fit: cover;
 }
 
 .container-comentar input {
