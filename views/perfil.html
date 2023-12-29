@@ -9,7 +9,6 @@
 
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/css/perfil.css">
-    <link rel="stylesheet" href="../public/css/perfil.css">
 
     <title>Inter Project | Perfil</title>
 </head>
@@ -73,7 +72,10 @@
       </div>
 
       <div class="container-info-usuario">
-        <h2 class="nome-usuario">Carregando...</h2>
+        <div class="textos-cabecalho">
+          <h2 class="nome-usuario">Carregando...</h2>
+          <h3 class="usuario-do-usuario">Carregando...</h3>
+        </div>
         <div class="info-extra-usuario">
           <p class="texto-info info-publicacoes"><span class="info-num">0</span> Publicações</p>
           <p class="texto-info info-seguidores"><span class="info-num">0</span> Seguidores</p>
@@ -86,6 +88,7 @@
         <button class="botao-editar-perfil" onclick="abrirModalEditarPerfil();">Editar Perfil</button>
         <button class="botao-seguir-usuario" onclick="seguirUsuario();">Seguir</button>
         <button class="botao-padrao">Carregando...</button>
+        <h4 class="tipo-usuario">Carregando...</h4>
       </div>
     </div>
 

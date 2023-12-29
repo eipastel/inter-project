@@ -78,6 +78,7 @@ async function carregarPostagens(offset) {
       SELECT
       atualizacoes.id AS id,
       atualizacoes.mensagemNovaAtt AS mensagemnovaatt,
+      atualizacoes.disponivel AS disponivel,
       usuarios.usuario AS usuario,
       usuarios.caminho_foto_perfil AS caminhofotoperfil,
       (
@@ -97,7 +98,8 @@ async function carregarPostagens(offset) {
       LEFT JOIN usuarios ON atualizacoes.id_usuario = usuarios.id
       LEFT JOIN curtidas ON atualizacoes.id = curtidas.id_postagem
       LEFT JOIN comentarios ON atualizacoes.id = comentarios.id_postagem
-      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario, usuarios.caminho_foto_perfil
+      WHERE atualizacoes.disponivel = true
+      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario, usuarios.caminho_foto_perfil, atualizacoes.disponivel
       ORDER BY atualizacoes.id DESC
       LIMIT ${limit} OFFSET ${offset};
     `;
@@ -118,16 +120,32 @@ async function carregarPostagens(offset) {
   }
 }
 
-async function excluirPostagem(idPostagem) {
+// Model para editar postagem
+async function editarPostagem(editadoEm, novaMensagem, idPostagem) {
   try {
-    let statusRemocao = await db`
-      DELETE FROM atualizacoes
-      WHERE id = ${idPostagem};
-    `;
 
-    return statusRemocao
+    let statusEdicao = await db`
+      UPDATE atualizacoes SET (mensagemnovaatt, editadoem) = (${novaMensagem}, ${editadoEm})
+      WHERE id = ${idPostagem}
+    `;
+    return statusEdicao
   } catch(error) {
     throw error;
+  }
+}
+
+// Model para visualizar uma postagem
+async function verPostagem(idPostagem) {
+  try {
+
+    let resultadoConsulta = await db`
+      SELECT * FROM atualizacoes
+      WHERE ID = ${idPostagem}
+    `;
+
+    return resultadoConsulta[0];
+  } catch(error) {
+    throw error
   }
 }
 
@@ -136,7 +154,8 @@ module.exports = {
     criarTabela,
     postar,
     carregarPostagens,
-    excluirPostagem,
+    editarPostagem,
     curtirPostagem,
+    verPostagem,
 
 };

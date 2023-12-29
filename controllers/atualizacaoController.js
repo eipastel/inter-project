@@ -46,14 +46,13 @@ async function carregarPostagens(req, res) {
     }
 }
 
-// Controller para excluir postagem
-async function excluirPostagem(req, res) {
+// Controller para editar postagem
+async function editarPostagem(req, res) {
     try {
-        const { idPostagem } = req.params;
+        const { editadoEm, novaMensagem, idPostagem } = req.body;
+        const respostaEdicao = await atualizacaoModel.editarPostagem(editadoEm, novaMensagem, idPostagem);
 
-        const respostaExclusao = await atualizacaoModel.excluirPostagem(idPostagem);
-
-        res.json({ respostaExclusao });
+        res.json({ respostaEdicao });
     } catch(error) {
         console.error("Erro interno do servidor:", error)
     }
@@ -72,6 +71,7 @@ async function curtirPostagem(req, res) {
     }
 }
 
+// Controller para verificar a curtida da publicação
 async function verificarCurtida(req, res){
     try {
         const { idUsuario, idPostagem } = req.params;
@@ -85,13 +85,27 @@ async function verificarCurtida(req, res){
     }
 }
 
+// Controller para verificar uma postagem
+async function verPostagem(req, res){
+    try {
+        const { idPostagem } = req.params;
+
+        const postagem = await atualizacaoModel.verPostagem(idPostagem);
+
+        res.json(postagem);
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports = {
     // Funções exportadas:
     criarTabela,
     postar,
     carregarPostagens,
-    excluirPostagem,
+    editarPostagem,
     curtirPostagem,
     verificarCurtida,
+    verPostagem,
 
 };

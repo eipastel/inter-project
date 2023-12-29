@@ -12,10 +12,13 @@ router.get('/postagens', atualizacaoController.carregarPostagens);
 // Rota para curtir postagem
 router.post('/curtirPostagem', atualizacaoController.curtirPostagem);
 
-// Rota para mostrar postagens
-router.delete('/excluirPostagem/:idPostagem', atualizacaoController.excluirPostagem);
+// Rota para editar postagem
+router.put('/editarPostagem', atualizacaoController.editarPostagem);
 
 // Rota para verificar curtidas
 router.get('/verificarCurtida/:idUsuario/:idPostagem', atualizacaoController.verificarCurtida);
+
+// Rota para ver uma atualização
+router.get('/verPostagem/:idPostagem', atualizacaoController.verPostagem);
 
 module.exports = router;

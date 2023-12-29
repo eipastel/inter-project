@@ -7,6 +7,7 @@ const barraProgresso = document.getElementById('progresso');
 const inputImagem = document.getElementById('input-imagem');
 const imgFotoPerfil = document.querySelector('.editar-perfil-img');
 const uploadUrl = `${API}upload-image`;
+const iconeEditarPerfil = document.querySelector('.editar-perfil-img');
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         // Coletando variáveis do DOM
         let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
         let nomeUsuario = document.querySelector('.nome-usuario');
+        let usuarioDoUsuario = document.querySelector('.usuario-do-usuario');
         let bioUsuario = document.querySelector('.bio-usuario');
         let infoPublicacoes = document.querySelector('.info-publicacoes');
         let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
@@ -21,7 +23,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         let botaoEditarPerfil = document.querySelector('.botao-editar-perfil');
         let botaoSeguir = document.querySelector('.botao-seguir-usuario');
         let botaoCarregando = document.querySelector('.botao-padrao');
-
+        let textoTipoUsuario = document.querySelector('.tipo-usuario');
+        let divInfoPerfil = document.querySelector('.info-extra-usuario');
+        
         let nome = document.getElementById('nome');
         let usuario = document.getElementById('usuario');
         let bio = document.getElementById('bio');
@@ -40,8 +44,10 @@ document.addEventListener("DOMContentLoaded", async function() {
                 // Obtendo informações detalhadas do perfil do usuário
                 const informacoesUsuario = await obterInformacoesUsuario(usuarioLogado.id);
                 perfilDoUsuario = informacoesUsuario[0];
+                iconeEditarPerfil.src = `${usuarioLogado.caminhofotoperfil}`
                 botaoEditarPerfil.style.display = "block"
-                botaoCarregando.style.display = "none"
+                botaoCarregando.remove()
+                botaoSeguir.remove();
             } else {
                 // Obtendo informações detalhadas do perfil do usuário na URL
                 const informacoesUsuarioNaURL = await obterInformacoesPeloUsuario(nomeUsuarioNaURL);
@@ -50,32 +56,39 @@ document.addEventListener("DOMContentLoaded", async function() {
                     return;
                 }
                 perfilDoUsuario = informacoesUsuarioNaURL[0];
-                botaoSeguir.style.display = "block"
-                botaoCarregando.style.display = "none"
+                botaoSeguir.style.display = "block";
+                botaoCarregando.remove();
+                botaoEditarPerfil.remove();
             }
 
-            if (usuarioLogado.tipoUsuario === 1) {
+            if (perfilDoUsuario.id_tipo_usuario === 1) {
                 // Condições para o usuário administrador
                 tipoUsuario = "Administrador"
+                textoTipoUsuario.classList.add('usuario-adm');
 
-            } else if (usuarioLogado.tipoUsuario === 2 || !usuarioLogado) {
+            } else if (perfilDoUsuario.id_tipo_usuario === 2 || !usuarioLogado) {
                 // Condições para o usuário espectador
                 tipoUsuario = "Espectador"
+                botaoEditarPerfil.remove();
+                divInfoPerfil.remove();
 
-            } else if (usuarioLogado.tipoUsuario === 3) {
+            } else if (perfilDoUsuario.id_tipo_usuario === 3) {
                 // Condições para o usuário verificado
                 tipoUsuario = "Verificado"
+                textoTipoUsuario.classList.add('usuario-verificado');
             }
 
             // Trocando as informações necessárias
             nomeUsuarioAPostar.innerHTML = `<h5 id="nome-do-usuario-a-postar">${formatarNomeCompleto(usuarioLogado.nome)}</h5>`
-            nomeUsuario.innerHTML = `<h2 class="nome-usuario">${perfilDoUsuario.nome}</h2>`;
+            nomeUsuario.textContent = `${perfilDoUsuario.nome}`;
+            usuarioDoUsuario.textContent = `@${perfilDoUsuario.usuario}`;
             bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}</p>`;
             infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes[0].id === null ? 0 : perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
             fotosPerfil.forEach(fotoPerfil => {
                 fotoPerfil.src = perfilDoUsuario.caminho_foto_perfil ? perfilDoUsuario.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg';
             });
             fotosPerfilCabecalhoDoUsuarioLogado.src = `${usuarioLogado.caminhofotoperfil ? usuarioLogado.caminhofotoperfil : '/img/foto-exemplo-perfil.jpg'}`;
+            textoTipoUsuario.textContent = `${tipoUsuario}`
             
             nome.value = `${perfilDoUsuario.nome}`
             usuario.value = `${usuarioLogado.usuario}`
@@ -172,7 +185,6 @@ function selecionarFoto() {
 }
 
 // Evento para quando selecionar a imagem
-// Evento para quando selecionar a imagem
 inputImagem.addEventListener('change', async function () {
     try {
         if (this.files.length > 0) {
@@ -181,7 +193,7 @@ inputImagem.addEventListener('change', async function () {
             const formData = new FormData();
             formData.append('image', imagem);
 
-            const respostaUpload = await fetch('/upload-image', {
+            const respostaUpload = await fetch(`${API}upload-image`, {
                 method: 'POST',
                 body: formData,
             });
@@ -206,7 +218,6 @@ inputImagem.addEventListener('change', async function () {
     }
 });
 
-
 // Função para salvar as informações do perfil
 async function salvarPerfil() {
     try {
@@ -215,7 +226,7 @@ async function salvarPerfil() {
         let nome = document.getElementById('nome').value;
         let usuario = document.getElementById('usuario').value;
         let bio = document.getElementById('bio').value;
-        let caminhoFotoPerfil = fotoSelecionada ? fotoSelecionada : '/img/foto-exemplo-perfil.jpg';
+        let caminhoFotoPerfil = fotoSelecionada ? fotoSelecionada : iconeEditarPerfil.src;
 
         // Bloqueando botão salvar enquanto faz as operações
         const botaoSalvar = document.getElementById('botao-salvar-perfil');
@@ -244,7 +255,7 @@ async function salvarPerfil() {
         const usuarioLogado = await descobrirUsuarioLogado();
 
         if(nomeValido && usuarioValido) {
-            const response = await fetch('/atualizar-perfil', {
+            const response = await fetch(`atualizar-perfil`, {
             
                 method: 'PUT',
                 headers: {
@@ -373,37 +384,37 @@ function renderizarPostagens(usuario) {
     let postagens = usuario.publicacoes
     if(postagens[0].id === null) {
         const todasAtualizacoes = document.querySelector('.container-publicacoes');
-        todasAtualizacoes.innerHTML = '<h3 class="sem-publicacoes">Usuário não tem publicações</>';
+        todasAtualizacoes.innerHTML = '<h3 class="sem-publicacoes">Esse(a) usuário(a) não possui publicações</>';
     } else {
         const todasAtualizacoes = document.querySelector('.container-publicacoes');
         todasAtualizacoes.innerHTML = '';
     
         postagens.forEach(postagem => {
-            const idPostagem = postagem.id;
-            const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem), idPostagem);
-            const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
-            const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
-            const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
-    
             const divMaior = document.createElement("div");
-            const novaDiv = document.createElement("div");
-            novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
-            novaDiv.innerHTML = `
-                ${cabecalhoDaAtualizacao.outerHTML}
-                ${conteudoAtualizacao.outerHTML}
-                <div class="container-extras">
-                    ${infoAcoesExtras.outerHTML}
-                    ${containerComentarios.outerHTML}
-                </div>
-            `;
-    
-            divMaior.innerHTML = `
-                    ${novaDiv.outerHTML}
-            `;
-    
-            // Adiciona a nova postagem no final da lista
-            todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
-        });
+                const idPostagem = postagem.id;
+                const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(dataFormatada(postagem.criadoem), idPostagem);
+                const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
+                const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
+                const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
+        
+                const novaDiv = document.createElement("div");
+                novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
+                novaDiv.innerHTML = `
+                    ${cabecalhoDaAtualizacao.outerHTML}
+                    ${conteudoAtualizacao.outerHTML}
+                    <div class="container-extras">
+                        ${infoAcoesExtras.outerHTML}
+                        ${containerComentarios.outerHTML}
+                    </div>
+                `;
+        
+                divMaior.innerHTML = `
+                        ${novaDiv.outerHTML}
+                `;
+                
+                // Adiciona a nova postagem no final da lista
+                todasAtualizacoes.insertBefore(divMaior, todasAtualizacoes.firstChild);
+            });
     }
     
     // Parando de mostrar o carregamento
@@ -417,7 +428,7 @@ function criarCabecalhoAtualizacao(criadoEm, idPostagem) {
 
     const textosCabecalho = document.createElement("div");
     textosCabecalho.classList.add("textos-cabecalho");
-    textosCabecalho.innerHTML = `<h3>#${idPostagem}</h3><p>${criadoEm}</p>`;
+    textosCabecalho.innerHTML = `<h3>#${idPostagem}</h3><p>${criadoEm}.</p>`;
 
     cabecalhoDaAtualizacao.appendChild(textosCabecalho);
 
@@ -425,10 +436,19 @@ function criarCabecalhoAtualizacao(criadoEm, idPostagem) {
 }
 
 // Função para criar o conteúdo da atualização
-function criarConteudoAtualizacao(mensagem) {
+function criarConteudoAtualizacao(mensagem, maximoDeLinhas = 7) {
     const conteudoAtualizacao = document.createElement("div");
     conteudoAtualizacao.classList.add("conteudo-atualizacao");
-    conteudoAtualizacao.innerHTML = `<p class="textos-atualizacao">${mensagem}</p>`;
+
+    // Substituir "\n" por elementos <br>
+    const linhas = mensagem.split('\n');
+    const mensagemComQuebrasDeLinha = linhas.slice(0, maximoDeLinhas).join('<br>');
+
+    // Se houver mais linhas além do limite, exibir o restante na mesma linha
+    const restanteMensagem = linhas.slice(maximoDeLinhas).join(' ');
+    const mensagemFinal = restanteMensagem ? `${mensagemComQuebrasDeLinha} ${restanteMensagem}` : mensagemComQuebrasDeLinha;
+
+    conteudoAtualizacao.innerHTML = `<p class="textos-atualizacao">${mensagemFinal}</p>`;
 
     return conteudoAtualizacao;
 }
@@ -498,7 +518,7 @@ function criarContainerComentarios(arrayComentarios, idPostagem) {
             const nomeUsuario = comentario.nomeusuario
             divComentario.innerHTML = `<h3>${nomeUsuario}</h3><p>${comentario.comentario}</p>`;
 
-            containerComentarios.insertBefore(divComentario, containerComentarios.firstChild);
+            containerComentarios.appendChild(divComentario);
         }
     } else {
         // Tratativa para caso não hajam comentários

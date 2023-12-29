@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // Configurar o multer para armazenar temporariamente os arquivos enviados
-const storage = multer.memoryStorage(); // Salvar o arquivo em buffer de memória
+const storage = multer.memoryStorage(); // Salva o arquivo em buffer de memória
 const upload = multer({ storage: storage });
 
 // Middleware express.static para servir arquivos estáticos da pasta 'public'
@@ -28,7 +28,6 @@ app.use(usuarioRoutes);
 app.use(atualizacaoRoutes);
 app.use(perfilRoutes);
 app.use(comentarioRoutes);
-
 
 // Nova rota para upload de imagens
 app.post('/upload-image', upload.single('image'), async (req, res) => {

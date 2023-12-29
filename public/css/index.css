@@ -306,6 +306,7 @@ div.logo a h1 {
 .container-comentar img {
     width: 45px;
     height: 45px;
+    border-radius: 50%;
     object-fit: cover;
 }
 
@@ -532,7 +533,7 @@ div.logo a h1 {
     cursor: pointer;
 }
 
-#botao-postar-atualizacao {
+#botao-postar-atualizacao, #botao-editar-atualizacao {
     font-family: 'Sora', sans-serif;
     font-size: 1.3rem;
     font-weight: 500;
@@ -547,12 +548,12 @@ div.logo a h1 {
     transition: all .3s;
 }
 
-#botao-postar-atualizacao:hover {
+#botao-postar-atualizacao:hover, #botao-editar-atualizacao:hover {
     background-color: #4b66c9;
     transform: scale(1.07);
 }
 
-#botao-postar-atualizacao:active {
+#botao-postar-atualizacao:active, #botao-editar-atualizacao:active {
     transform: scale(.93);
 }
 

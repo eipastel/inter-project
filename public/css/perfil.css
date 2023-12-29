@@ -198,6 +198,11 @@ div.logo a h1 {
     font-size: 1.05rem;
 }
 
+.usuario-do-usuario {
+    color: var(--azul);
+    font-size: 0.9rem;
+}
+
 .texto-info {
     font-weight: 300;
 }
@@ -220,6 +225,26 @@ div.logo a h1 {
     border-radius: 7px;
     cursor: pointer;
     transition: all .1s;
+}
+
+.container-botao-editar {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tipo-usuario {
+    font-size: .9rem;
+    color: var(--azul);
+}
+
+.usuario-verificado {
+    color: rgb(153, 0, 255);
+}
+
+.usuario-adm {
+    color: rgb(255, 69, 13);
 }
 
 .botao-editar-perfil:hover, .botao-seguir-usuario:hover, .botao-padrao:hover {
@@ -549,7 +574,7 @@ div.logo a h1 {
 .editar-perfil-img {
     margin-top: 1.5rem;
     width: 100px;
-    min-height: 100px;
+    height: 100px;
     object-fit: cover;
     cursor: pointer;
 }
