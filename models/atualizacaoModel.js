@@ -16,8 +16,8 @@ async function criarTabela() {
         
         CREATE TABLE IF NOT EXISTS curtidas (
           id SERIAL PRIMARY KEY,
-          id_usuario INT,
-          id_postagem INT,
+          id_usuario INT REFERENCES usuarios(id),
+          id_postagem INT REFERENCES atualizacoes(id),
           curtido_em VARCHAR(30)
         );`;
   } catch (error) {

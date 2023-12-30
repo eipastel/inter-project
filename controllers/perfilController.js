@@ -27,6 +27,32 @@ async function obterInformacoesUsuario(req, res, next) {
     }
 }
 
+// Função para seguir ou deixar de seguir um usuário
+async function seguirOuDeixarDeSeguir(req, res, next) {
+    try {
+        const { idSeguidor, idSeguido, dataDeCriacao } = req.body;
+        const segInfo = {
+            idSeguidor,
+            idSeguido,
+            dataDeCriacao
+        }
+
+        // Verifica se o usuário já está seguindo o outro
+        const resultadoConsulta = await perfilModel.seguirOuDeixarDeSeguir(segInfo);
+
+        if (resultadoConsulta === "unfollowed") {
+            res.status(200).json({ message: "Deixou de seguir o usuário", status: "deixou de seguir" });
+        } else if (resultadoConsulta === "followed") {
+            res.status(200).json({ message: "Seguiu o usuário", status: "começou a seguir" });
+        } else {
+            res.status(400).json({ message: "A operação não pôde ser concluída", status: "error" });
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Função para obter informações detalhadas do usuário
 async function obterInformacoesPeloUsuario(req, res, next) {
     try {
@@ -59,6 +85,6 @@ module.exports = {
     obterInformacoesUsuario,
     perfilUsuario,
     obterInformacoesPeloUsuario,
-
+    seguirOuDeixarDeSeguir,
     
 };

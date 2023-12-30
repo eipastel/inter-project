@@ -104,24 +104,21 @@
           <div class="container-cabecalho-modal">
               <h4>Crie um Novo Post</h4>
           </div>
-
           <div class="conteudo-modal">
-              <div class="adicionar-imagem-ao-post">
-                  <input type="file" id="input-da-imagem" accept="image/*">
-                  <label for="input-da-imagem" id="label-do-input-da-imagem">
-                    <i class="fa-solid fa-image"></i>
-                    <p>+ Adicione uma foto ou vídeo</p>
-                  </label>
-              </div>
               <div class="container-criacao-atualizacao">
                   <div class="info-usuario-a-postar">
-                      <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de Perfil" class="profile-img">
-                      <h5 id="nome-do-usuario-a-postar">Nome do Usuário</h5>
+                      <div class="container-info-user">
+                          <img src="/img/foto-exemplo-perfil.jpg" alt="Foto de Perfil" class="profile-img foto-perfil-dinamica">
+                          <h5 id="nome-do-usuario-a-postar">Nome do Usuário</h5>
+                      </div>
+                      <div class="container-restante">
+                          <p class="caracteres-restantes">Restantes: <span class="texto-verde">300</span></p>
+                      </div>
                   </div>
                   <textarea maxlength="300" id="conteudo-da-atualizacao-a-postar" placeholder="Digite sua atualização..."></textarea>
                   <div class="extras-do-novo-post">
                       <div class="visibilidade">
-                          <p><i class="fa-regular fa-eye"></i> Essa publicação será pública para todos utilizando o <span class="nome-do-projeto">inter-project</span>.</p>
+                          <p><i class="fa-regular fa-eye"></i> Essa publicação será visível para todos utilizando o <span class="nome-do-projeto">inter-project</span>.</p>
                           <button onclick="postar()" id="botao-postar-atualizacao">Postar</button>
                       </div>
                   </div>

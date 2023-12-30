@@ -9,6 +9,9 @@ router.get('/perfil', perfilController.meuPerfil);
 // Define a rota para obter informações detalhadas do usuário pelo "id"
 router.get('/usuario/:idUsuarioLogado', perfilController.obterInformacoesUsuario);
 
+// Rota para seguir ou deixar de seguir usuário
+router.post('/seguirOuDeixarDeSeguir', perfilController.seguirOuDeixarDeSeguir);
+
 // Define a rota para obter informações detalhadas do usuário pelo "usuário"
 router.get('/usuarioperfil/:usuario', perfilController.obterInformacoesPeloUsuario);
 

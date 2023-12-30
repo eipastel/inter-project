@@ -1,7 +1,6 @@
 // Variáveis iniciais
 let tipoUsuario;
 let numeroPostagensCarregadas = 0;
-let colocarImagemAoPost = document.querySelector('.adicionar-imagem-ao-post');
 
 const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
@@ -150,12 +149,12 @@ async function postar() {
                 body: JSON.stringify(novaAtt),
             });
 
-        // Verificando se a postagem foi bem-sucedida antes de carregar as postagens
-        if (response.ok) {
-            await carregarPostagens(6581);
-        } else {
-            console.error('Erro ao postar atualização:', response.status, response.statusText);
-        }
+            // Verificando se a postagem foi bem-sucedida antes de carregar as postagens
+            if (response.ok) {
+                await carregarPostagens(6581);
+            } else {
+                console.error('Erro ao postar atualização:', response.status, response.statusText);
+            }
         }
     } catch (error) {
         console.error('Erro ao postar atualização:', error);
@@ -168,6 +167,7 @@ async function postar() {
 }
 
 // Funções utilitárias
+// Função para retornar a data de hoje, formatada no formato do banco
 function dataAtual() {
     let hoje = new Date();
     let dia = hoje.getDate().toString().padStart(2, '0');
@@ -383,19 +383,26 @@ function adicionarComentarioNaTela(idPostagem, comentario) {
 
 // Função para editar postagem (implementando)
 async function editarPostagem(idPostagem, caminhoFotoPerfil, nomeUsuario) {
-    // Variáveis iniciais
+    // Obter dados da postagem a ser editada
     const response = await fetch(`${API}verPostagem/${idPostagem}`);
     const postagem = await response.json();
+
+    // Atualizar estadoAtual
+    estadoAtual = {
+        modo: "edicao",
+        idPostagemEditar: idPostagem,
+    };
+
+    // Variáveis iniciais
     let containerTitulo = document.querySelector('.container-cabecalho-modal');
     let inputEditarPost = document.getElementById('conteudo-da-atualizacao-a-postar');
     let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
     let visibilidadeEBotao = document.querySelector('.visibilidade');
     let fotoPerfil = document.querySelector('.profile-img');
     let restantes = document.querySelector('.texto-verde');
-    abrirModalPost();
+    abrirModalPost('edicao');
 
-    // Trocando os valores do modal para o post
-    colocarImagemAoPost.style.display = 'none'
+    // Preencher campos do modal com dados da postagem
     inputEditarPost.value = `${postagem.mensagemnovaatt}`
     containerTitulo.innerHTML = `<h4>Edite a publicação</h4>`
     nomeUsuarioAPostar.textContent = ` ${formatarNomeCompleto(nomeUsuario)}`
@@ -484,14 +491,25 @@ function dataFormatada(data) {
 }
 
 // Função para abrir o modal de criar novo post
-async function abrirModalPost() {
-    colocarImagemAoPost.style.display = "block";
-    if(!localStorage.getItem('jwtToken')) {
+async function abrirModalPost(objetivo) {
+    const usuarioLogado = await descobrirUsuarioLogado();
+    if(!usuarioLogado) {
         alert("Você não está logado!")
         return;
     };
 
-    const modalCriacaoPost = document.querySelector('.container-modal-para-postar');
+    let modalCriacaoPost = document.querySelector('.container-modal-para-postar');
+    const mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
+    const fotoPerfilPostagem = document.querySelector('.profile-img');
+    const nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
+    const tituloModal = document.querySelector('.container-cabecalho-modal h4');
+
+    if(objetivo == "nova") {
+        mensagemNovaAttInput.value = ''
+        fotoPerfilPostagem.src = usuarioLogado.caminho_foto_perfil
+        nomeUsuarioAPostar.textContent = formatarNomeCompleto(usuarioLogado.nome)
+        tituloModal.textContent = `Crie um Novo Post`
+    }
     modalCriacaoPost.style.display = "block"
 };
 

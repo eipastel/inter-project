@@ -2,7 +2,8 @@ const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
 
 // Variáveis iniciais
-let tipoUsuario, fotoSelecionada;
+let tipoUsuario, fotoSelecionada, idUsuarioPerfil;
+let estaSeguidoPeloUsuario = false;
 const barraProgresso = document.getElementById('progresso');
 const inputImagem = document.getElementById('input-imagem');
 const imgFotoPerfil = document.querySelector('.editar-perfil-img');
@@ -18,6 +19,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         let usuarioDoUsuario = document.querySelector('.usuario-do-usuario');
         let bioUsuario = document.querySelector('.bio-usuario');
         let infoPublicacoes = document.querySelector('.info-publicacoes');
+        let infoSeguidores = document.querySelector('.info-seguidores');
+        let infoSeguindo = document.querySelector(`.info-seguindo`);
         let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
         let fotosPerfilCabecalhoDoUsuarioLogado = document.querySelector('.foto-usuario-logado');
         let botaoEditarPerfil = document.querySelector('.botao-editar-perfil');
@@ -57,6 +60,14 @@ document.addEventListener("DOMContentLoaded", async function() {
                 }
                 perfilDoUsuario = informacoesUsuarioNaURL[0];
                 botaoSeguir.style.display = "block";
+                for(let index = 0; index < perfilDoUsuario.seguidores.length; index++) {
+                    if(perfilDoUsuario.seguidores[index] === usuarioLogado.id) {
+                        estaSeguidoPeloUsuario = true;
+                        botaoSeguir.textContent = `Deixar de Seguir`;
+                        botaoSeguir.classList.add('seguindo-usuario');
+                    }
+                }
+                idUsuarioPerfil = perfilDoUsuario.id;
                 botaoCarregando.remove();
                 botaoEditarPerfil.remove();
             }
@@ -84,11 +95,17 @@ document.addEventListener("DOMContentLoaded", async function() {
             usuarioDoUsuario.textContent = `@${perfilDoUsuario.usuario}`;
             bioUsuario.innerHTML = `<p class="bio-usuario">${perfilDoUsuario.bio ? perfilDoUsuario.bio : ''}</p>`;
             infoPublicacoes.innerHTML = `<p class="texto-info info-publicacoes"><span class="info-num">${perfilDoUsuario.publicacoes[0].id === null ? 0 : perfilDoUsuario.publicacoes.length}</span> ${perfilDoUsuario.publicacoes.length == 1 ? 'Publicação' : 'Publicações'}</p>`;
+            infoSeguidores.innerHTML = `<p class="texto-info info-seguidores"><span class="info-num">${perfilDoUsuario.seguidores.length}</span> ${perfilDoUsuario.seguidores.length == 1 ? 'Seguidor' : 'Seguidores'}</p>`;
+            infoSeguindo.innerHTML = `<span class="info-num">${perfilDoUsuario.seguindo.length}</span> Seguindo`;
             fotosPerfil.forEach(fotoPerfil => {
                 fotoPerfil.src = perfilDoUsuario.caminho_foto_perfil ? perfilDoUsuario.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg';
             });
             fotosPerfilCabecalhoDoUsuarioLogado.src = `${usuarioLogado.caminhofotoperfil ? usuarioLogado.caminhofotoperfil : '/img/foto-exemplo-perfil.jpg'}`;
             textoTipoUsuario.textContent = `${tipoUsuario}`
+
+            if(estaSeguidoPeloUsuario) {
+
+            }
             
             nome.value = `${perfilDoUsuario.nome}`
             usuario.value = `${usuarioLogado.usuario}`
@@ -108,15 +125,108 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
 // Funções utilitárias
-
 // Função para seguir um usuário
-function seguirUsuario() {
-    alert("Essa funcionalidade ainda não está disponível!")
+async function seguirUsuario() {
+    const usuarioLogado = await descobrirUsuarioLogado();
+    const botaoSeguir = document.querySelector('.botao-seguir-usuario');
+    try {
+        const segInfo = {
+            idSeguidor: usuarioLogado.id,
+            idSeguido: idUsuarioPerfil,
+            dataDeCriacao: dataAtual()
+        }
+
+        formatarBotaoCurtir();
+        // Enviando a requisição para o backend
+        const response = await fetch(`${API}seguirOuDeixarDeSeguir`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('jwtToken'),
+            },
+            body: JSON.stringify(segInfo),
+        });
+        // Desabilitando o botão de seguir
+        botaoSeguir.disabled = true;
+
+        if(response.ok) {
+
+        }
+    } catch(error) {
+        throw error;
+    } finally {
+        // Habilitando o botão de seguir independentemente do resultado
+        botaoSeguir.disabled = false;
+    }
+
 }
 
 // Função para simular o carregamento
 function simularCarregamento(progresso) {
     barraProgresso.style.width = progresso + '%';
+}
+
+// Função para postar uma nova atualização
+async function postar() {
+    try {
+        // Se for um usuário Verificado ou Administrador a atualização será postada
+        if (tipoUsuario === "Verificado" || tipoUsuario === "Administrador") {
+            // Variáveis iniciais
+            const mensagemNovaAttInput = document.getElementById('conteudo-da-atualizacao-a-postar');
+            const mensagemNovaAtt = mensagemNovaAttInput.value;
+
+            if (!mensagemNovaAtt || mensagemNovaAtt.trim() === "") {
+                alert("Preencha o campo para fazer uma postagem!");
+                return;
+            }
+
+            // Desabilitar o botão de postagem
+            const botaoPostar = document.getElementById('botao-postar-atualizacao');
+            botaoPostar.disabled = true;
+
+            // Limpando o campo da atualização
+            mensagemNovaAttInput.value = "";
+            fecharModalPost();
+
+            // Double check do usuário logado
+            const usuarioLogado = await descobrirUsuarioLogado();
+            if (!usuarioLogado) {
+                console.log("Usuário não encontrado. A atualização não será postada.");
+                return;
+            }
+
+            // Criando o objeto da nova atualização
+            const novaAtt = {
+                mensagemNovaAtualizacao: mensagemNovaAtt,
+                idUsuario: usuarioLogado.id,
+                criadoEm: dataAtual(),
+            };
+
+            // Enviando a postagem para o backend
+            const response = await fetch(`${API}postar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+                body: JSON.stringify(novaAtt),
+            });
+
+            // Verificando se a postagem foi bem-sucedida antes de carregar as postagens
+            if (response.ok) {
+                location.reload();
+            } else {
+                console.error('Erro ao postar atualização:', response.status, response.statusText);
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao postar atualização:', error);
+        alert('Erro ao postar atualização. Tente novamente mais tarde.');
+    } finally {
+        // Habilitar o botão de postagem, independentemente do resultado
+        const botaoPostar = document.getElementById('botao-postar-atualizacao');
+        botaoPostar.disabled = false;
+    }
 }
 
 // Função para obter informações detalhadas do usuário
@@ -135,6 +245,20 @@ async function obterInformacoesUsuario(idUsuario) {
         return null;
     }
 }
+
+// Função para retornar a data de hoje, formatada no formato do banco
+function dataAtual() {
+    let hoje = new Date();
+    let dia = hoje.getDate().toString().padStart(2, '0');
+    let mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    let ano = hoje.getFullYear();
+    let horas = hoje.getHours().toString().padStart(2, '0');
+    let minutos = hoje.getMinutes().toString().padStart(2, '0');
+    let segundos = hoje.getSeconds().toString().padStart(2, '0');
+    let dataAtual = `${dia}-${mes}-${ano}@${horas}:${minutos}:${segundos}`;
+
+    return dataAtual;
+};
 
 // Função para obter id do usuário da URL
 async function obterInformacoesPeloUsuario(usuario) {
@@ -554,4 +678,25 @@ function formatarNomeCompleto(nomeCompleto) {
 
     // Se não houver mais partes, retorne apenas o primeiro nome capitalizado
     return primeiroNomeCapitalizado;
+}
+
+function formatarBotaoCurtir() {
+    let botaoSeguir = document.querySelector('.botao-seguir-usuario');
+    let quantidadeSeguidoresParagrafo = document.querySelector(`.info-seguidores`);
+    let quantidadeSeguidores = quantidadeSeguidoresParagrafo.textContent
+    let arrayQuantidadeSeguidores = quantidadeSeguidores.split(" ");
+    let novoValor = arrayQuantidadeSeguidores[0]
+
+    if(botaoSeguir.classList[1] == 'seguindo-usuario') {
+        botaoSeguir.classList.remove('seguindo-usuario');
+        botaoSeguir.textContent = `Seguir`
+        novoValor--;
+    } else {
+        novoValor++;
+        botaoSeguir.textContent = `Deixar de Seguir`
+        botaoSeguir.classList.add('seguindo-usuario');
+    }
+
+    arrayQuantidadeSeguidores[0] = novoValor;
+    quantidadeSeguidoresParagrafo.innerHTML = `<span class="info-num">${novoValor}</span> ${novoValor !== 1 ? 'Seguidores' : 'Seguidor'}`;
 }

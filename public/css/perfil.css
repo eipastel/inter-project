@@ -234,6 +234,12 @@ div.logo a h1 {
     align-items: center;
 }
 
+.seguindo-usuario {
+    color: var(--branco);
+    background-color: var(--azul);
+    border: none;
+}
+
 .tipo-usuario {
     font-size: .9rem;
     color: var(--azul);
@@ -251,6 +257,10 @@ div.logo a h1 {
     background-color: rgba(238, 238, 238, 0.89);
 }
 
+.seguindo-usuario:hover {
+    background-color: rgb(47, 92, 238);
+    color: var(--branco);
+}
 .botao-padrao {
     display: block;
 }
@@ -376,7 +386,7 @@ div.logo a h1 {
     z-index: 13;
 }
   
-.sub-container-modal, .sub-container-modal-editar-perfil {
+.sub-container-modal, .sub-container-modal-editar-perfil  {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -391,7 +401,6 @@ div.logo a h1 {
 .container-cabecalho-modal {
     display: flex;
     align-items: center;
-    justify-content: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.315);
     z-index: 14;
 }
@@ -399,6 +408,11 @@ div.logo a h1 {
 .container-cabecalho-modal h4 {
     font-size: 1.8rem;
     padding: 1rem;
+}
+
+.caracteres-restantes {
+    font-size: .8rem;
+    font-weight: 600;
 }
   
 .fechar-modal {
@@ -409,43 +423,13 @@ div.logo a h1 {
     right: .7rem;
 }
   
-.conteudo-modal, .conteudo-modal-editar-perfil {
+.conteudo-modal {
     display: flex;
     width: 100%;
 }
 
 .sub-container-modal div {
     width: 100%;
-}
-
-.adicionar-imagem-ao-post {
-    position: relative;
-    display: flex;
-    background-color: #E5EAFC;
-    align-items: center;
-    cursor: pointer;
-}
-
-#label-do-input-da-imagem {
-    font-size: 1.4rem;
-    position: absolute;
-    cursor: pointer;
-    top: 140px;
-    left: 36px;
-}
-
-#label-do-input-da-imagem i, #label-do-input-da-imagem p {
-    color: #718BED;
-}
-
-#input-da-imagem {
-    position: absolute;
-    opacity: 0;
-    font-size: 100px;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    cursor: pointer;
 }
 
 /* Conteudo da atualização */
@@ -463,12 +447,40 @@ div.logo a h1 {
     min-width: 400px;
     align-items: center;
     padding: .5rem 1rem;
+    justify-content: space-between;
+}
+
+.texto-verde {
+    color: rgb(50, 145, 50);
+}
+
+.texto-amarelo {
+    color: rgb(238, 185, 11);
+}
+
+.texto-vermelho {
+    color: rgb(211, 63, 63);
+}
+
+.texto-critico {
+    color: rgb(255, 0, 0);
+    font-weight: bolder;
+}
+
+.container-info-user {
+    display: flex;
+    width: 70%;
+    align-items: center;
     gap: .6rem;
 }
 
-.profile-img, .editar-perfil-img {
+.container-restante {
+    max-width: 70px;
+}
+
+.profile-img, .editar-perfil-img  {
     width: 48px;
-    min-height: 48px;
+    height: 48px;
     object-fit: cover;
     border-radius: 50%;
 }
@@ -528,7 +540,7 @@ div.logo a h1 {
     cursor: pointer;
 }
 
-#botao-postar-atualizacao, #botao-salvar-perfil {
+#botao-postar-atualizacao, #botao-editar-atualizacao, #botao-salvar-perfil {
     font-family: 'Sora', sans-serif;
     font-size: 1.3rem;
     font-weight: 500;
@@ -543,12 +555,12 @@ div.logo a h1 {
     transition: all .3s;
 }
 
-#botao-postar-atualizacao:hover {
+#botao-postar-atualizacao:hover, #botao-editar-atualizacao:hover, #botao-salvar-perfil:hover {
     background-color: #4b66c9;
     transform: scale(1.07);
 }
 
-#botao-postar-atualizacao:active {
+#botao-postar-atualizacao:active, #botao-editar-atualizacao:active, #botao-salvar-perfil:active {
     transform: scale(.93);
 }
 

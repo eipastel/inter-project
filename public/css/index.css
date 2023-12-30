@@ -395,36 +395,6 @@ div.logo a h1 {
     width: 100%;
 }
 
-.adicionar-imagem-ao-post {
-    position: relative;
-    display: flex;
-    background-color: #E5EAFC;
-    align-items: center;
-    cursor: pointer;
-}
-
-#label-do-input-da-imagem {
-    font-size: 1.4rem;
-    position: absolute;
-    cursor: pointer;
-    top: 140px;
-    left: 36px;
-}
-
-#label-do-input-da-imagem i, #label-do-input-da-imagem p {
-    color: #718BED;
-}
-
-#input-da-imagem {
-    position: absolute;
-    opacity: 0;
-    font-size: 100px;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    cursor: pointer;
-}
-
 /* Conteudo da atualização */
 .container-criacao-atualizacao {
     display: flex;
@@ -579,10 +549,6 @@ div.logo a h1 {
 
     .sub-container-modal {
         width: calc(100% - 20px);
-    }
-
-    .adicionar-imagem-ao-post {
-        display: none;
     }
 }
 
