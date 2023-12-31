@@ -47,9 +47,13 @@
                 <i class="fa-solid fa-square-plus"></i>
             </a>
 
-            <a href="/" class="opcao-menu opcao-notificacoes">
-                <i class="fa-solid fa-envelope"></i>
+            <a class="opcao-menu opcao-notificacoes">
+                <i class="fa-solid fa-envelope icone-notificacao" onclick="abreEFechaNotificacoes()" ></i>
                 <span class="quantidade-notificacoes">0</span>
+                    <ul id="lista-notificacoes">
+                        <h5 class="info-sem-notificacao">Carregando notificações...</h5>
+                        <button onclick="marcarTodasAsComoLido()" class="botao-marcar-como-lido">Marcar Todas Como Lida</button>
+                    </ul>
             </a>
 
             <div class="foto-perfil dropdown">

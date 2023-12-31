@@ -33,9 +33,16 @@ router.get('/cadastro', (req, res) => {
 router.get('/pesquisarUsuarios', usuarioController.verTodosUsuarios);
 
 // Rota para verificar notificacoes
-router.get('/verificarAtualizacoes/:idUsuarioLogado', usuarioController.verificarNotificacoes);
+router.get('/verificarNotificacoes/:idUsuarioLogado', usuarioController.verificarNotificacoes);
+
+// Rota para ver todas as notificacoes
+router.get('/verNotificacoes/:idUsuarioLogado', usuarioController.verNotificacoes);
+
+// Rota para marcar notificação como lida
+router.put('/marcarComoLida', usuarioController.marcarNotificacaoComoLida);
 
 // Rota para atualizar o perfil
 router.put('/atualizar-perfil', usuarioController.atualizarPerfil);
+
 
 module.exports = router;

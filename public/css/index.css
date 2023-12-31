@@ -161,6 +161,10 @@ div.logo a h1 {
     color: #5E74C6;
 }
 
+.opcao-notificacoes:hover {
+    transform: scale(1);
+}
+
 /* Notificações */
 .opcao-notificacoes {
     position: relative;
@@ -184,6 +188,81 @@ div.logo a h1 {
 
 .tem-notificacao {
     background-color: rgb(255, 100, 29);
+}
+
+#lista-notificacoes {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--branco);
+    top: 4rem;
+    right: -2rem;
+    margin-right: 2rem;
+    min-width: 400px;
+    list-style: none;
+    gap: .5rem;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    cursor: default;
+    max-height: 300px;
+    overflow-y: scroll;
+    display: none;
+}
+
+#lista-notificacoes::-webkit-scrollbar { 
+	display: none;
+}
+
+.container-notificacao {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: .3rem 1rem;
+    justify-content: flex-start;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.info-sem-notificacao {
+    text-align: center;
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+.notificacao-item {
+    padding: .5rem 0;
+}
+
+.notificacao-nao-lida {
+    background-color: #eee;
+}
+
+#icone-diamante {
+    font-size: .7rem;
+    color: var(--azul);
+    cursor: auto;
+}
+
+.botao-marcar-como-lido {
+    border: none;
+    outline: none;
+    width: 60%;
+    padding: 1rem;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bolder;
+    font-family: 'Sora', sans-serif;
+    transition: all .2s;
+}
+
+.botao-marcar-como-lido:hover {
+    color: var(--azul);
+    transform: scale(1.05);
+}
+
+.botao-marcar-como-lido:active {
+    transform: scale(.95);
 }
 
 /* Dropdown */

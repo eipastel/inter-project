@@ -41,6 +41,31 @@ async function verificarNotificacoes(req, res, next) {
 
     const resultadoConsulta = await usuarioModel.verificarNotificacoes(idUsuarioLogado);
 
+    res.json(resultadoConsulta);
+  } catch(error) {
+    next(error)
+  }
+}
+
+// Função para marcar as notificações como lida
+async function marcarNotificacaoComoLida(req, res, next) {
+  try{
+    const { idNotificacao } = req.body;
+    
+    const resultadoMarcacao = await usuarioModel.marcarNotificacaoComoLida(idNotificacao);
+
+    res.json(resultadoMarcacao);
+  } catch(error) {
+    next(error)
+  }
+}
+
+// Função para ver todas as notificações não lidas do usuário logado
+async function verNotificacoes(req, res, next) {
+  try {
+    const { idUsuarioLogado } = req.params;
+
+    const resultadoConsulta = await usuarioModel.verNotificacoes(idUsuarioLogado);
 
     res.json(resultadoConsulta);
   } catch(error) {
@@ -125,5 +150,7 @@ module.exports = {
     verTodosUsuarios,
     criarNotificacao,
     verificarNotificacoes,
+    verNotificacoes,
+    marcarNotificacaoComoLida,
 
 };

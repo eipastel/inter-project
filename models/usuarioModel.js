@@ -37,7 +37,7 @@ async function criarTabela() {
 }
 
 // Função para criar notificação
-async function criarNotificacao({ idUsuarioAcao, idUsuarioNotificado, idAcao, idTipoAcao, criadoEm }) {
+async function criarNotificacao({ idUsuarioAcao, idUsuarioNotificado, idAcao = 0, idTipoAcao, criadoEm }) {
   try{
     const resultadoConsulta = await db`
       INSERT INTO notificacoes (id_usuario_acao, id_usuario_notificado, id_acao, id_tipo_acao, criadoEm)
@@ -63,6 +63,47 @@ async function verificarNotificacoes(idUsuarioLogado) {
     return resultadoConsulta;
   } catch(error) {
     console.error("Erro na verificação de notificação:", error)
+  }
+}
+
+// Função para verificar notificação
+async function verNotificacoes(idUsuarioLogado) {
+  try{
+    const resultadoConsulta = await db`
+      SELECT 
+        usuarios.nome AS nomeUsuario,
+        notificacoes.id_tipo_acao AS idTipoAcao,
+        notificacoes.status AS visualizado,
+        notificacoes.criadoem,
+        notificacoes.id AS idNotificacao
+      FROM notificacoes
+      INNER JOIN usuarios ON notificacoes.id_usuario_acao = usuarios.id
+      WHERE notificacoes.id_usuario_notificado = ${idUsuarioLogado}
+      AND notificacoes.status = false
+      ORDER BY notificacoes.id DESC;
+    `;
+
+    if(!resultadoConsulta) {
+      return [];
+    }
+    return resultadoConsulta;
+  } catch(error) {
+    console.error("Erro na verificação de notificação:", error)
+  }
+}
+
+// Função para marcar as notificações como lida
+async function marcarNotificacaoComoLida(arrayIdNotificacoes) {
+  try{
+    const resultadoConsulta = await db`
+      UPDATE notificacoes 
+      SET status = true
+      WHERE id = ANY(${arrayIdNotificacoes});
+    `;
+
+    return resultadoConsulta;
+  } catch(error) {
+    throw error
   }
 }
 
@@ -208,5 +249,7 @@ module.exports = {
     verTodosUsuarios,
     criarNotificacao,
     verificarNotificacoes,
+    verNotificacoes,
+    marcarNotificacaoComoLida,
 
 };

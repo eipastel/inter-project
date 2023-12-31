@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         const usuarioLogado = await descobrirUsuarioLogado();
         simularCarregamento(150);
+        const notificResponse = await fetch(`${API}verificarNotificacoes/${usuarioLogado.id}`);
+        const notificacoesUsuarioLogado = await notificResponse.json();
+        let quantidadeNotificacoes = document.querySelector('.quantidade-notificacoes');
 
         // Caso o usuário esteja logado, trocando as informações
         if (usuarioLogado) {
@@ -102,9 +105,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             });
             fotosPerfilCabecalhoDoUsuarioLogado.src = `${usuarioLogado.caminhofotoperfil ? usuarioLogado.caminhofotoperfil : '/img/foto-exemplo-perfil.jpg'}`;
             textoTipoUsuario.textContent = `${tipoUsuario}`
-
-            if(estaSeguidoPeloUsuario) {
-
+            if(notificacoesUsuarioLogado.length > 0) {
+                quantidadeNotificacoes.textContent = `${notificacoesUsuarioLogado.length}`;
+                quantidadeNotificacoes.classList.add('tem-notificacao');
             }
             
             nome.value = `${perfilDoUsuario.nome}`
@@ -123,8 +126,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
-
-// Funções utilitárias
 // Função para seguir um usuário
 async function seguirUsuario() {
     const usuarioLogado = await descobrirUsuarioLogado();
@@ -135,8 +136,8 @@ async function seguirUsuario() {
             idSeguido: idUsuarioPerfil,
             dataDeCriacao: dataAtual()
         }
-
         formatarBotaoCurtir();
+
         // Enviando a requisição para o backend
         const response = await fetch(`${API}seguirOuDeixarDeSeguir`, {
             method: 'POST',
@@ -150,7 +151,20 @@ async function seguirUsuario() {
         botaoSeguir.disabled = true;
 
         if(response.ok) {
-
+            // Se resposta estiver OK, notificar usuário
+            const response = await fetch(`${API}notificarUsuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+                body: JSON.stringify({
+                    idUsuarioAcao: usuarioLogado.id, 
+                    idUsuarioNotificado: idUsuarioPerfil,
+                    idTipoAcao: 3, 
+                    criadoEm: dataAtual(),
+                }),
+            });
         }
     } catch(error) {
         throw error;
@@ -750,3 +764,160 @@ function filtrarUsuarios() {
         }
     }
 }
+
+// Função para mostrar as notificações do usuário logado formatadas
+async function abreEFechaNotificacoes() {
+    const usuarioLogado = await descobrirUsuarioLogado();
+    const listaNotificacoes = document.getElementById('lista-notificacoes');
+    const botaoMarcarTodasComoLida = document.querySelector('.botao-marcar-como-lido');
+    const infoSemNotificacao = document.querySelector('.info-sem-notificacao');
+    const iconeNotificacao = document.querySelector('.icone-notificacao');
+
+    // Verifica se o modal está visível
+    if (listaNotificacoes.style.display === 'flex') {
+        // Se estiver visível, oculta
+        listaNotificacoes.style.display = 'none';
+    } else {
+        // Se estiver oculto, exibe
+        listaNotificacoes.style.display = 'flex';
+        const notificResponse = await fetch(`${API}verNotificacoes/${usuarioLogado.id}`);
+        const notificacoesUsuarioLogado = await notificResponse.json();
+        
+        if(notificacoesUsuarioLogado.length > 0) {
+            const notificacaoItem = document.querySelectorAll('.notificacao-item');
+            notificacaoItem.forEach(item => {
+                item.remove();
+            });
+            botaoMarcarTodasComoLida.style.display = "block";
+            infoSemNotificacao.style.display = "none";
+            for(let index = 0; index < notificacoesUsuarioLogado.length; index++) {
+                let tipoAcao;
+                const itemNotificacao = notificacoesUsuarioLogado[index];
+                const novaNotific = document.createElement('li');
+                novaNotific.classList.add('notificacao-item', 'notificacao-nao-lida')
+                novaNotific.classList.add(`notificacao-${itemNotificacao.idnotificacao}`)
+                novaNotific.onclick = () => {
+                    marcarNotificacaoComoLido(itemNotificacao.idnotificacao)
+                }
+                switch(itemNotificacao.idtipoacao) {
+                    case 1:
+                        tipoAcao = "curtiu a sua publicação.";
+                        break;
+                    case 2:
+                        tipoAcao = "comentou em sua publicação.";
+                        break;
+                    case 3:
+                        tipoAcao = "começou a te seguir.";
+                        break;
+                }
+
+                novaNotific.innerHTML = `
+                        <div class="container-notificacao">
+                            <i id="icone-diamante" class="fa-solid fa-diamond"></i>
+                            <p class="mensagem">
+                                ${formatarNomeCompleto(itemNotificacao.nomeusuario)} ${tipoAcao}
+                            </p>
+                        </div>
+                `;
+                listaNotificacoes.insertBefore(novaNotific, listaNotificacoes.firstChild);
+            }
+            let quantidadeNotificacoes = document.querySelectorAll('.notificacao-item').length;
+            let quantidadeNotificacoesDOM = document.querySelector('.quantidade-notificacoes');
+            quantidadeNotificacoesDOM.textContent = quantidadeNotificacoes;
+        } else {
+            infoSemNotificacao.textContent = "Você não tem notificações!"
+            botaoMarcarTodasComoLida.style.display = "none";
+            infoSemNotificacao.style.display = "block";
+        }
+    }
+}
+
+async function marcarNotificacaoComoLido(idNotificacao) {
+    let notificacaoParaRemover = document.querySelector(`.notificacao-${idNotificacao}`);
+    let quantidadeNotificacoes = document.querySelector('.quantidade-notificacoes');
+    const infoSemNotificacao = document.querySelector('.info-sem-notificacao');
+    const botaoMarcarTodasComoLida = document.querySelector('.botao-marcar-como-lido');
+    notificacaoParaRemover.remove();
+
+    try {
+        fetch(`${API}marcarComoLida`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('jwtToken'),
+            },
+            body: JSON.stringify({
+                idNotificacao: [idNotificacao]
+            }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Notificação marcada como não lido com sucesso!
+            })
+            .catch(error => {
+                console.error('Erro durante a requisição:', error);
+            });
+    } catch(error) {
+        throw error
+    }
+
+    quantidadeNotificacoes.textContent = `${Number(quantidadeNotificacoes.textContent) - 1}`;
+    if(Number(quantidadeNotificacoes.textContent) <= 0) {
+        quantidadeNotificacoes.classList.remove('tem-notificacao');
+        infoSemNotificacao.style.display = "block";
+        infoSemNotificacao.textContent = "Todas as notificações foram lidas!";
+        botaoMarcarTodasComoLida.style.display = "none";
+    }
+}
+
+async function marcarTodasAsComoLido() {
+    const notificacaoItem = document.querySelectorAll('.notificacao-item');
+    let quantidadeNotificacoes = document.querySelector('.quantidade-notificacoes');
+    const infoSemNotificacao = document.querySelector('.info-sem-notificacao');
+    const botaoMarcarTodasComoLida = document.querySelector('.botao-marcar-como-lido');
+    let todasNotificacoesId = [];
+    notificacaoItem.forEach(item => {
+        todasNotificacoesId.push(Number(item.classList[2].split('-')[1]))
+        item.remove();
+    });
+
+    try {
+        fetch(`${API}marcarComoLida`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('jwtToken'),
+            },
+            body: JSON.stringify({
+                idNotificacao: [todasNotificacoesId]
+            }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Notificação marcada como não lido com sucesso!
+                console.log('Todas as notificações marcadas como não lidas com sucesso:', data);
+            })
+            .catch(error => {
+                console.error('Erro durante a requisição:', error);
+            });
+    } catch(error) {
+        throw error
+    }
+
+    infoSemNotificacao.textContent = "Todas as notificações foram lidas!";
+    infoSemNotificacao.style.display = "block";
+    quantidadeNotificacoes.textContent = `0`;
+    botaoMarcarTodasComoLida.style.display = "none";
+    quantidadeNotificacoes.classList.remove('tem-notificacao');
+}
+
