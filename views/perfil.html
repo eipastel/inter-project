@@ -28,8 +28,10 @@
     </div>
 
     <div class="barra-de-pesquisa">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input class="barra-de-pesquisa-input" name="barra-de-pesquisa" id="barra-de-pesquisa" type="text" placeholder="Pesquisar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input onkeyup="filtrarUsuarios();" class="barra-de-pesquisa-input" name="barra-de-pesquisa" id="barra-de-pesquisa" type="text" placeholder="Pesquisar">
+      <ul id="lista-usuarios-pesquisas">
+      </ul>
     </div>
 
     <nav class="barra-de-navegacao">

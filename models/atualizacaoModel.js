@@ -79,6 +79,7 @@ async function carregarPostagens(offset) {
       atualizacoes.id AS id,
       atualizacoes.mensagemNovaAtt AS mensagemnovaatt,
       atualizacoes.disponivel AS disponivel,
+      atualizacoes.id_usuario as idusuariopostagem,
       usuarios.usuario AS usuario,
       usuarios.caminho_foto_perfil AS caminhofotoperfil,
       (
@@ -99,7 +100,7 @@ async function carregarPostagens(offset) {
       LEFT JOIN curtidas ON atualizacoes.id = curtidas.id_postagem
       LEFT JOIN comentarios ON atualizacoes.id = comentarios.id_postagem
       WHERE atualizacoes.disponivel = true
-      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario, usuarios.caminho_foto_perfil, atualizacoes.disponivel
+      GROUP BY atualizacoes.id, nomeusuario, usuarios.usuario, usuarios.caminho_foto_perfil, atualizacoes.disponivel, atualizacoes.id_usuario
       ORDER BY atualizacoes.id DESC
       LIMIT ${limit} OFFSET ${offset};
     `;

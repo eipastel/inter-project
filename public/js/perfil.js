@@ -2,7 +2,7 @@ const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
 
 // Variáveis iniciais
-let tipoUsuario, fotoSelecionada, idUsuarioPerfil;
+let tipoUsuario, fotoSelecionada, idUsuarioPerfil, usuariosCadastrados;
 let estaSeguidoPeloUsuario = false;
 const barraProgresso = document.getElementById('progresso');
 const inputImagem = document.getElementById('input-imagem');
@@ -699,4 +699,54 @@ function formatarBotaoCurtir() {
 
     arrayQuantidadeSeguidores[0] = novoValor;
     quantidadeSeguidoresParagrafo.innerHTML = `<span class="info-num">${novoValor}</span> ${novoValor !== 1 ? 'Seguidores' : 'Seguidor'}`;
+}
+
+// Fetch para obter todos os usuários em um array (com id, nome, usuário e caminho_foto_perfil)
+fetch(`${API}pesquisarUsuarios`)
+    .then((response) => response.json())
+    .then((arrayUsuarios) => {
+        usuariosCadastrados = arrayUsuarios;
+    });
+// Função para filtrar usuários na pesquisa
+function filtrarUsuarios() {
+    // Variáveis iniciais
+    let inputPesquisa = document.getElementById('barra-de-pesquisa');
+    let listaProdutos = document.getElementById('lista-usuarios-pesquisas');
+    let textoNegrito;
+    let filtro = inputPesquisa.value.trim().toUpperCase();
+    let contador = 0;
+    let maximoResultados = 7;
+
+    // Limpar a lista se o filtro estiver vazio
+    if (filtro === '') {
+        listaProdutos.innerHTML = '';
+        return;
+    }
+
+    listaProdutos.innerHTML = ''; // Limpando a lista antes de renderizar novamente
+
+    for (let index = 0; index < usuariosCadastrados.length && contador < maximoResultados; index++) {
+        const infoUsuario = usuariosCadastrados[index];
+        let nomeUsuario = infoUsuario.nome;
+
+        if (nomeUsuario.trim().toUpperCase().indexOf(filtro) > -1) {
+            const li = document.createElement('li');
+            li.classList.add('usuario-pesquisa');
+            li.innerHTML = `
+                <a href="/perfil/${infoUsuario.usuario}">
+                    <img class="imagem-usuario-pesquisa" src="${infoUsuario.caminho_foto_perfil ? infoUsuario.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg'}" alt="Imagem usuário da pesquisa">
+                    <span class="nome-usuario-pesquisa">${formatarNomeCompleto(infoUsuario.nome)}</span>
+                </a>
+            `;
+            listaProdutos.appendChild(li);
+            textoNegrito = li.querySelector('.nome-usuario-pesquisa');
+            contador++;
+
+            if (textoNegrito) {
+                textoNegrito.innerHTML = nomeUsuario.replace(new RegExp(filtro, 'gi'), (corresp) => {
+                    return '<strong>' + corresp + '</strong>';
+                });
+            }
+        }
+    }
 }

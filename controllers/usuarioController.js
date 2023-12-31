@@ -21,6 +21,44 @@ async function cadastrarUsuario(req, res, next) {
   }
 }
 
+// Controlador para notificar usuário
+async function criarNotificacao(req, res, next) {
+  try {
+    const { idUsuarioAcao, idUsuarioNotificado, idAcao, idTipoAcao, criadoEm } = req.body;
+
+    const resultadoCriacao = await usuarioModel.criarNotificacao({ idUsuarioAcao, idUsuarioNotificado, idAcao, idTipoAcao, criadoEm });
+
+    res.json(resultadoCriacao);
+  } catch(error) {
+    next(error)
+  }
+}
+
+// Função para verificar notificações do usuário logado
+async function verificarNotificacoes(req, res, next) {
+  try {
+    const { idUsuarioLogado } = req.params;
+
+    const resultadoConsulta = await usuarioModel.verificarNotificacoes(idUsuarioLogado);
+
+
+    res.json(resultadoConsulta);
+  } catch(error) {
+    next(error)
+  }
+}
+
+// Controlador para ver todos os usuários
+async function verTodosUsuarios(req, res, next) {
+  try {
+    const resultadoConsulta = await usuarioModel.verTodosUsuarios();
+    res.json(resultadoConsulta);
+  } catch(error) {
+    next(error)
+  }
+
+}
+
 // Controlador para rota de login
 async function logar(req, res) {
   try {
@@ -84,5 +122,8 @@ module.exports = {
     logar,
     descobrirUsuarioLogado,
     atualizarPerfil,
+    verTodosUsuarios,
+    criarNotificacao,
+    verificarNotificacoes,
 
 };

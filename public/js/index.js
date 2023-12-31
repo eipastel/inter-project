@@ -1,5 +1,5 @@
 // Variáveis iniciais
-let tipoUsuario;
+let tipoUsuario, usuariosCadastrados;
 let numeroPostagensCarregadas = 0;
 
 const API = `https://inter-project-d39u.onrender.com/`
@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         let nomeUsuarioAPostar = document.getElementById('nome-do-usuario-a-postar');
         nomeUsuarioAPostar.textContent = formatarNomeCompleto(usuarioLogado.nome)
         let fotosPerfil = document.querySelectorAll('.foto-perfil-dinamica');
+        const notificResponse = await fetch(`${API}verificarAtualizacoes/${usuarioLogado.id}`);
+        const notificacoesUsuarioLogado = await notificResponse.json();
+        let quantidadeNotificacoes = document.querySelector('.quantidade-notificacoes');
 
         if(usuarioLogado.tipoUsuario === 1) {
             // Condições para o usuário administrador
@@ -53,6 +56,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         fotosPerfil.forEach(fotoPerfil => {
             fotoPerfil.src = usuarioLogado.caminho_foto_perfil ? usuarioLogado.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg';
         });
+        if(notificacoesUsuarioLogado.length > 0) {
+            quantidadeNotificacoes.textContent = `${notificacoesUsuarioLogado.length}`;
+            quantidadeNotificacoes.classList.add('tem-notificacao');
+        }
     } else {
         window.location.href = "/login";
         return;
@@ -286,7 +293,7 @@ async function excluirPostagem(idPostagem) {
 }
 
 // Função para curtir ou descutir postagem
-async function curtirPublicacao(idUsuario, idPostagem) {
+async function curtirPublicacao(idUsuario, idPostagem, idUsuarioNotificado) {
     try {
         // Atualizando na tela o comentário curtido
         formatarCurtidas(idPostagem);
@@ -306,7 +313,21 @@ async function curtirPublicacao(idUsuario, idPostagem) {
 
         // Verificando se a ação foi bem-sucedida
         if (response.ok) {
-            // 
+            // Se for, notificar usuário
+            const response = await fetch(`${API}notificarUsuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwtToken'),
+                },
+                body: JSON.stringify({
+                    idUsuarioAcao: idUsuario, 
+                    idUsuarioNotificado: idUsuarioNotificado, 
+                    idAcao: idPostagem, 
+                    idTipoAcao: 1, 
+                    criadoEm: dataAtual(),
+                }),
+            });
         } else {
             console.error('Erro ao curtir/descurtir atualização:', response.status, response.statusText);
         }
@@ -348,7 +369,8 @@ async function comentarPostagem(idUsuario, idPostagem, nomeUsuarioLogado) {
 
             // Verificando se a ação foi bem-sucedida
             if (response.ok) {
-                // Tratativa da resposta OK do backend
+                // Se estiver, enviando notificação
+
             } else {
                 console.error('Erro ao comentar na atualização:', response.status, response.statusText);
             }
@@ -519,6 +541,56 @@ function fecharModalPost() {
     modalCriacaoPost.style.display = "none"
 }
 
+// Fetch para obter todos os usuários em um array (com id, nome, usuário e caminho_foto_perfil)
+fetch(`${API}pesquisarUsuarios`)
+    .then((response) => response.json())
+    .then((arrayUsuarios) => {
+        usuariosCadastrados = arrayUsuarios;
+    });
+// Função para filtrar usuários na pesquisa
+function filtrarUsuarios() {
+    // Variáveis iniciais
+    let inputPesquisa = document.getElementById('barra-de-pesquisa');
+    let listaProdutos = document.getElementById('lista-usuarios-pesquisas');
+    let textoNegrito;
+    let filtro = inputPesquisa.value.trim().toUpperCase();
+    let contador = 0;
+    let maximoResultados = 7;
+
+    // Limpar a lista se o filtro estiver vazio
+    if (filtro === '') {
+        listaProdutos.innerHTML = '';
+        return;
+    }
+
+    listaProdutos.innerHTML = ''; // Limpando a lista antes de renderizar novamente
+
+    for (let index = 0; index < usuariosCadastrados.length && contador < maximoResultados; index++) {
+        const infoUsuario = usuariosCadastrados[index];
+        let nomeUsuario = infoUsuario.nome;
+
+        if (nomeUsuario.trim().toUpperCase().indexOf(filtro) > -1) {
+            const li = document.createElement('li');
+            li.classList.add('usuario-pesquisa');
+            li.innerHTML = `
+                <a href="/perfil/${infoUsuario.usuario}">
+                    <img class="imagem-usuario-pesquisa" src="${infoUsuario.caminho_foto_perfil ? infoUsuario.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg'}" alt="Imagem usuário da pesquisa">
+                    <span class="nome-usuario-pesquisa">${formatarNomeCompleto(infoUsuario.nome)}</span>
+                </a>
+            `;
+            listaProdutos.appendChild(li);
+            textoNegrito = li.querySelector('.nome-usuario-pesquisa');
+            contador++;
+
+            if (textoNegrito) {
+                textoNegrito.innerHTML = nomeUsuario.replace(new RegExp(filtro, 'gi'), (corresp) => {
+                    return '<strong>' + corresp + '</strong>';
+                });
+            }
+        }
+    }
+}
+
 // Função para focar o teclado no input de comentário
 function focarComentario(idPostagem) {
     let inputComentario = document.querySelector(`.comentario-input-postagem-${idPostagem}`);
@@ -545,13 +617,16 @@ async function renderizarPostagens(postagens, segredo) {
             const idPostagem = postagem.id;
             const cabecalhoDaAtualizacao = criarCabecalhoAtualizacao(postagem.nomeusuario, dataFormatada(postagem.criadoem), postagem.usuario, postagem.caminhofotoperfil, usuarioLogado.usuario);
             const conteudoAtualizacao = criarConteudoAtualizacao(postagem.mensagemnovaatt);
-            const acoesExtras = criarAcoesExtras(idPostagem, postagem.curtidas, idUsuarioLogado, postagem.caminhofotoperfil, postagem.nomeusuario);
+            const acoesExtras = criarAcoesExtras(idPostagem, postagem.curtidas, idUsuarioLogado, postagem.caminhofotoperfil, postagem.nomeusuario, postagem.idusuariopostagem);
             const infoAcoesExtras = criarInfoAcoesExtras(idPostagem, postagem.comentarios, postagem.curtidas);
             const containerComentarios = criarContainerComentarios(postagem.comentarios, idPostagem);
             const containerComentar = criarFormularioComentario(idPostagem, usuarioLogado);
     
             const novaDiv = document.createElement("div");
             novaDiv.classList.add("container-da-atualizacao", `postagem-${idPostagem}`);
+            if(postagem.idusuariopostagem === 1) {
+                novaDiv.classList.add('postagem-importante')
+            }
             novaDiv.innerHTML = `
                 ${cabecalhoDaAtualizacao.outerHTML}
                 ${conteudoAtualizacao.outerHTML}
@@ -619,7 +694,7 @@ function criarConteudoAtualizacao(mensagem, maximoDeLinhas = 7) {
 }
 
 // Função para criar as ações extras
-function criarAcoesExtras(idPostagem, curtidas, idUsuarioLogado, caminhoFotoPerfil, nomeUsuarioAPostar) {
+function criarAcoesExtras(idPostagem, curtidas, idUsuarioLogado, caminhoFotoPerfil, nomeUsuarioAPostar, idUsuarioPublicacao) {
     const acoesExtras = document.createElement("div");
     acoesExtras.classList.add("acoes-extras");
 
@@ -632,11 +707,12 @@ function criarAcoesExtras(idPostagem, curtidas, idUsuarioLogado, caminhoFotoPerf
 
     const acaoCurtir = document.createElement("div");
     acaoCurtir.classList.add("acao-curtir", `comentariocurtido-${idPostagem}`);
-    acaoCurtir.setAttribute("onclick", `curtirPublicacao(${idUsuarioLogado}, ${idPostagem})`);
+    acaoCurtir.setAttribute("onclick", `curtirPublicacao(${idUsuarioLogado}, ${idPostagem}, ${idUsuarioPublicacao})`);
 
     acaoCurtir.innerHTML = `
-    <i id="icone-da-postagem-${idPostagem}" class="${estaCurtidoPeloUsuarioLogado ? 'fa-solid comentario-curtido' : 'fa-regular'} fa-heart"></i>
-    <p class="estado-texto-curtir-${idPostagem}">${estaCurtidoPeloUsuarioLogado ? 'Curtido' : 'Curtir'}</p>`;
+        <i id="icone-da-postagem-${idPostagem}" class="${estaCurtidoPeloUsuarioLogado ? 'fa-solid comentario-curtido' : 'fa-regular'} fa-heart"></i>
+        <p class="estado-texto-curtir-${idPostagem}">${estaCurtidoPeloUsuarioLogado ? 'Curtido' : 'Curtir'}</p>
+    `;
     
     const acaoComentar = document.createElement("div");
     acaoComentar.classList.add("acao-comentar");
@@ -686,7 +762,7 @@ function criarFormularioComentario(idPostagem, usuarioLogado) {
     const containerComentar = document.createElement("div");
     containerComentar.classList.add("container-comentar");
     containerComentar.innerHTML = `
-        <img src="${usuarioLogado.caminho_foto_perfil}" width="48px" alt="Foto usuário da postagem">
+        <img src="${usuarioLogado.caminho_foto_perfil ? usuarioLogado.caminho_foto_perfil : '/img/foto-exemplo-perfil.jpg'}" width="48px" alt="Foto usuário da postagem">
         <input maxlength="60" type="text" class="comentario-input-postagem-${idPostagem}" name="comentario" id="comentario" placeholder="Adicione o seu comentário...">
         <button id="botao-postar-comentario" onclick="comentarPostagem(${usuarioLogado.id}, ${idPostagem}, '${usuarioLogado.nome}');">Comentar</button>`;
     return containerComentar;
@@ -746,6 +822,7 @@ function simularCarregamento(progresso) {
     barraProgresso.style.width = progresso + '%';
 }
 
+// Função para pegar o primeiro nome
 function formatarNomeCompleto(nomeCompleto) {
     // Divindo o nome completo em partes usando o espaço como delimitador
     const partesNome = nomeCompleto.split(' ');

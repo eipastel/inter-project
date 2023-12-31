@@ -16,6 +16,9 @@ router.post('/logar', usuarioController.logar);
 // Rota para descobrir usuário logado
 router.post('/usuarioLogado', usuarioController.descobrirUsuarioLogado);
 
+// Rota para enviar notificação
+router.post('/notificarUsuario', usuarioController.criarNotificacao);
+
 // Rota para logar
 router.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'pagina-de-login.html'));
@@ -25,6 +28,12 @@ router.get('/login', (req, res) => {
 router.get('/cadastro', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'pagina-de-registro.html'));
 });
+
+// Rota para retornar todos os usuários
+router.get('/pesquisarUsuarios', usuarioController.verTodosUsuarios);
+
+// Rota para verificar notificacoes
+router.get('/verificarAtualizacoes/:idUsuarioLogado', usuarioController.verificarNotificacoes);
 
 // Rota para atualizar o perfil
 router.put('/atualizar-perfil', usuarioController.atualizarPerfil);

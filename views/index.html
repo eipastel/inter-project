@@ -29,7 +29,9 @@
 
         <div class="barra-de-pesquisa">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input class="barra-de-pesquisa-input" name="barra-de-pesquisa" id="barra-de-pesquisa" type="text" placeholder="Pesquisar">
+            <input onkeyup="filtrarUsuarios();" class="barra-de-pesquisa-input" name="barra-de-pesquisa" id="barra-de-pesquisa" type="text" placeholder="Pesquisar">
+            <ul id="lista-usuarios-pesquisas">
+            </ul>
         </div>
 
         <nav class="barra-de-navegacao">
@@ -47,6 +49,7 @@
 
             <a href="/" class="opcao-menu opcao-notificacoes">
                 <i class="fa-solid fa-envelope"></i>
+                <span class="quantidade-notificacoes">0</span>
             </a>
 
             <div class="foto-perfil dropdown">
@@ -58,7 +61,6 @@
                     <a onclick="sairDaConta();">Sair</a>
                 </div>
             </div>
-
         </nav>
     </header>
 
