@@ -1,5 +1,4 @@
 const db = require('../config/dbConfig.js');
-const comentarioController = require('../models/comentarioModel.js');
 
 async function criarTabela() {
   try {

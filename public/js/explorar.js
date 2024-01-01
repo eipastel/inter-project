@@ -1,13 +1,14 @@
-// Variáveis iniciais
-let tipoUsuario, usuariosCadastrados;
-
 const API = `https://inter-project-d39u.onrender.com/`
 // const API = `http://localhost:3000/`
+
+// Variáveis iniciais
+let tipoUsuario, usuariosCadastrados, usuarioLogadoUsuario;
 const barraProgresso = document.getElementById('progresso');
 
 // Assim que a página carrega, fazendo todas as operações
 document.addEventListener("DOMContentLoaded", async function() {
     const usuarioLogado = await descobrirUsuarioLogado();
+    usuarioLogadoUsuario = usuarioLogado.usuario
     simularCarregamento(250);
 
     // Caso o usuário esteja logado, trocando as informações.
@@ -427,3 +428,68 @@ async function marcarTodasAsComoLido() {
     botaoMarcarTodasComoLida.style.display = "none";
     quantidadeNotificacoes.classList.remove('tem-notificacao');
 }
+
+// Mostrar todos os usuários na tela
+async function explorarUsuarios() {
+    const usuariosJSON = await fetch(`${API}explorarUsuarios`);
+    const usuariosFormatados = await usuariosJSON.json();
+
+    for(let index = 0; index < usuariosFormatados.length; index++) {
+        const containerUsuarios = document.querySelector('.container-cards-usuarios');
+        const usuario = usuariosFormatados[index]
+        const novoCard = document.createElement('div');
+        novoCard.classList.add('card-container');
+        let linhaTipoUsuario; 
+
+        switch(usuario.id_tipo_usuario) {
+            case 1:
+                linhaTipoUsuario = `<p class="tipo-usuario usuario-adm">Administrador</p>`;
+                break;
+            case 3:
+                linhaTipoUsuario = `<p class="tipo-usuario usuario-verificado">Verificado</p>`;
+                break;
+        }
+
+        novoCard.innerHTML = `
+            <div class="cabecalho-card">
+                <img class="foto-perfil-usuario-card" src="${usuario.caminho_foto_perfil}" alt="Foto de Perfil do Usuário">
+                <div class="textos-cabecalho-card">
+                    <h2>${formatarNomeCompleto(usuario.nome)}</h2>
+                    <h4 class="arroba-usuario-card">@${usuario.usuario}</h4>
+                    ${linhaTipoUsuario}
+                </div>
+            </div>
+            <div class="container-info-geral-usuario">
+                <div class="info-container">
+                    <h5 class="titulo-info">Aniversário</h5>
+                    <p class="info-usuario">Sem datas no momento!</p>
+                </div>
+                <div class="info-container">
+                    <h5 class="titulo-info">Seguidores</h5>
+                    <p class="info-usuario">${usuario.quantidade_seguidores}</p>
+                </div>
+                <div class="info-container">
+                    <h5 class="titulo-info">Postagens</h5>
+                    <p class="info-usuario">${usuario.quantidade_atualizacoes}</p>
+                </div>
+            </div>
+            <div class="container-botoes-card-usuario">
+                <button onclick="abrirPerfilAoClicar('${usuario.usuario}', '${usuarioLogadoUsuario}')">Visualizar Perfil</button>
+            </div>`;
+            containerUsuarios.appendChild(novoCard);
+    }
+}
+
+// Função para abrir o perfil ao clicar em um usuário
+function abrirPerfilAoClicar(usuario, usuarioLogado) {
+    // Lógica para determinar se o usuário está visualizando o próprio perfil ou o de outro usuário
+    if (usuario === usuarioLogado) {
+        // Se for o próprio perfil, redirecione para a rota do perfil
+        window.location.href = "/perfil";
+    } else {
+        // Se for o perfil de outro usuário, abra o perfil desse usuário
+        window.location.href = `/perfil/${usuario}`;
+    }
+}
+
+explorarUsuarios()
