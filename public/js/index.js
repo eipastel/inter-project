@@ -259,28 +259,30 @@ function abrirPerfilAoClicar(usuario, usuarioLogado) {
 }
 
 // Função para excluir uma atualização
-async function excluirPostagem(idPostagem) {
-    let temCerteza = confirm("Tem certeza que deseja excluir essa atualização?");
+async function removerPublicacao(idPostagem) {
+    let temCerteza = confirm("Não é possível excluir publicações, apenas oculta-las, deseja continuar?");
+
     if(temCerteza) {
         try {
             // Faça a solicitação para o backend para excluir a postagem
-            const response = await fetch(`${API}excluirPostagem/${idPostagem}`, {
-                method: 'DELETE',
+            console.log(idPostagem, dataAtual())
+            const response = await fetch(`${API}excluirPostagem`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': localStorage.getItem('jwtToken'),
                 },
+                body: JSON.stringify({
+                    idPostagem: idPostagem,
+                    removidoEm: dataAtual(),
+                }),
             });
     
             // Verifique se a resposta foi bem-sucedida (status 200)
             if (response.ok) {
                 // Remova a postagem da DOM
-                const postagemRemovida = document.querySelector(`.postagem-${idPostagem}`);
-                if (postagemRemovida) {
-                    postagemRemovida.remove();
-                } else {
-                    console.warn('Postagem não encontrada na DOM.');
-                }
+                alert("Exclusão realizada com sucesso!");
+                location.reload();
             } else {
                 console.error('Erro ao excluir postagem:', response.status, response.statusText);
             }
@@ -288,7 +290,7 @@ async function excluirPostagem(idPostagem) {
             console.error('Erro ao realizar a requisição para excluir postagem:', error);
         }
     } else {
-        alert("Operação de exclusão cancelada!")
+        alert("Operação cancelada!")
     }
 }
 
@@ -441,7 +443,10 @@ async function editarPostagem(idPostagem, caminhoFotoPerfil, nomeUsuario) {
     inputEditarPost.value = `${postagem.mensagemnovaatt}`
     containerTitulo.innerHTML = `<h4>Edite a publicação</h4>`
     nomeUsuarioAPostar.textContent = ` ${formatarNomeCompleto(nomeUsuario)}`
-    visibilidadeEBotao.innerHTML = `<button onclick="trocarInformacoesPublicacao(${idPostagem})" id="botao-editar-atualizacao">Finalizar</button>`
+    visibilidadeEBotao.innerHTML = `
+        <button onclick="trocarInformacoesPublicacao(${idPostagem})" id="botao-editar-atualizacao">Salvar Edição</button>
+        <button onclick="removerPublicacao(${idPostagem})" id="botao-excluir-atualizacao">Excluir Postagem</button>
+    `
     fotoPerfil.src = `${caminhoFotoPerfil}`
     restantes.innerText = `${300 - inputEditarPost.value.length}`
 }
@@ -854,7 +859,6 @@ async function abreEFechaNotificacoes() {
     const listaNotificacoes = document.getElementById('lista-notificacoes');
     const botaoMarcarTodasComoLida = document.querySelector('.botao-marcar-como-lido');
     const infoSemNotificacao = document.querySelector('.info-sem-notificacao');
-    const iconeNotificacao = document.querySelector('.icone-notificacao');
 
     // Verifica se o modal está visível
     if (listaNotificacoes.style.display === 'flex') {

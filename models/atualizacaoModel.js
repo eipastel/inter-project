@@ -135,6 +135,20 @@ async function editarPostagem(editadoEm, novaMensagem, idPostagem) {
   }
 }
 
+// Model para excluir postagem
+async function excluirPostagem(idPostagem, removidoEm) {
+  try {
+
+    let statusRemocao = await db`
+      UPDATE atualizacoes SET (disponivel, removidoem) = (false, ${removidoEm})
+      WHERE id = ${idPostagem}
+    `;
+    return statusRemocao
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Model para visualizar uma postagem
 async function verPostagem(idPostagem) {
   try {
@@ -158,5 +172,6 @@ module.exports = {
     editarPostagem,
     curtirPostagem,
     verPostagem,
+    excluirPostagem,
 
 };

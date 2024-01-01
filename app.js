@@ -6,6 +6,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const atualizacaoRoutes = require('./routes/atualizacaoRoutes');
 const perfilRoutes = require('./routes/perfilRoutes');
 const comentarioRoutes = require('./routes/comentarioRoutes');
+const explorarRoutes = require('./routes/explorarRoutes');
 const path = require('path');
 const axios = require('axios');
 const multer = require('multer');
@@ -28,6 +29,7 @@ app.use(usuarioRoutes);
 app.use(atualizacaoRoutes);
 app.use(perfilRoutes);
 app.use(comentarioRoutes);
+app.use(explorarRoutes);
 
 // Nova rota para upload de imagens
 app.post('/upload-image', upload.single('image'), async (req, res) => {

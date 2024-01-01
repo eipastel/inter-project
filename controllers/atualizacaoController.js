@@ -58,6 +58,18 @@ async function editarPostagem(req, res) {
     }
 }
 
+// Controller para excluir postagem
+async function excluirPostagem(req, res) {
+    try {
+        const { idPostagem, removidoEm } = req.body;
+        const respostaExclusao = await atualizacaoModel.excluirPostagem(idPostagem, removidoEm);
+
+        res.json({ respostaExclusao });
+    } catch(error) {
+        console.error("Erro interno do servidor:", error)
+    }
+}
+
 // Controller para curtir publicação
 async function curtirPostagem(req, res) {
     try {
@@ -107,5 +119,6 @@ module.exports = {
     curtirPostagem,
     verificarCurtida,
     verPostagem,
+    excluirPostagem,
 
 };

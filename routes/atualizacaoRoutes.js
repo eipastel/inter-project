@@ -15,6 +15,9 @@ router.post('/curtirPostagem', atualizacaoController.curtirPostagem);
 // Rota para editar postagem
 router.put('/editarPostagem', atualizacaoController.editarPostagem);
 
+// Rota para excluir postagem
+router.put('/excluirPostagem', atualizacaoController.excluirPostagem);
+
 // Rota para verificar curtidas
 router.get('/verificarCurtida/:idUsuario/:idPostagem', atualizacaoController.verificarCurtida);
 
